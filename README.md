@@ -1,9 +1,14 @@
 Correct by Construction Programming in Agda
 ===========================================
 
-Agda course at the EUTYPES Summer School '19 in Ohrid
-
 (This page is currently under construction)
+
+Abstract
+--------
+
+In a dependently typed programming language you can get much stronger static guarantees about the correctness of your program than in most other languages. At the same time, dependent types enable new forms of interactive programming, by letting the types guide the construction of the program. Dependently typed languages have existed for many years, but only recently have they become usable for practical programming.
+
+In this course, you will learn how to write correct-by-construction programs in the dependently typed programming language Agda. Concretely, we will together implement a verified typechecker and interpreter for a small C-like imperative language. Along the way, We will explore several modern features of the Agda language that make this task more pleasant, such as dependent pattern matching, monads and do-notation, coinduction and copattern matching, instance arguments, sized types, and the Haskell FFI.
 
 Links
 -----
@@ -13,13 +18,6 @@ Links
 * [Code listing](src/html/runwhile.html)
 
 * This README on as Webpage on [github.io](https://jespercockx.github.io/ohrid19-agda/)
-
-Abstract
---------
-
-In a dependently typed programming language you can get much stronger static guarantees about the correctness of your program than in most other languages. At the same time, dependent types enable new forms of interactive programming, by letting the types guide the construction of the program. Dependently typed languages have existed for many years, but only recently have they become usable for practical programming.
-
-In this course, you will learn how to write correct-by-construction programs in the dependently typed programming language Agda. Concretely, we will together implement a verified typechecker and interpreter for a small C-like imperative language. Along the way, We will explore several modern features of the Agda language that make this task more pleasant, such as dependent pattern matching, monads and do-notation, coinduction and copattern matching, instance arguments, sized types, and the Haskell FFI.
 
 Prerequisites
 -------------
