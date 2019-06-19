@@ -1,12 +1,5 @@
-Agda tutorial at POPL 2019
-==========================
-
-Running example:
-
-* type-checker and interpreter for simply typed language
-* FFI binding to parser
-
-Language: WHILE-language
+Agda course at EUTYPES Summer School '19 in Ohrid
+=================================================
 
 What is Agda?
 -------------
