@@ -1,10 +1,8 @@
 -- The delay monad for potentially non-terminating computation.
 
-module Delay where
+module V3.Delay where
 
 open import Library
-open import Category.Monad
-open import Category.Applicative.Indexed
 
 -- Coinductive delay monad.
 
@@ -57,7 +55,6 @@ instance
 -- Unwinding the delay monad might not terminate.
 
 {-# NON_TERMINATING #-}
-
 runDelay : ∀{A} → Delay ∞ A → A
 runDelay m = case m .force of λ where
   (return' a) → a

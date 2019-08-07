@@ -14,23 +14,23 @@ agda=agda
 ghcflags=--ghc-flag=-i../haskell --ghc-flag=-Wwarn
 
 # runwhile.agda must be first
-agdafiles=runwhile.agda Library.agda Library/Eq.agda Library/Monad.agda Library/Print.agda AST.agda Parser.agda WellTypedSyntax.agda TypeChecker.agda Value.agda Delay.agda Interpreter.agda UntypedInterpreter.agda
+agdafiles=runwhile.agda AST.agda Parser.agda WellTypedSyntax.agda TypeChecker.agda Value.agda Interpreter.agda UntypedInterpreter.agda
 
-default : all
+default : runwhile
 
 all : runwhile html test
 
 runwhile : $(agdafiles) $(parser)
-	$(agda) --compile $(ghcflags) $<
+	$(agda) --compile -i.. $(ghcflags) $<
 
 test : runwhile
-	make -C ../test
+	make -C ../../test
 
 parser : $(parser)
 	./$(parser) ../test/gcd.c
 
 html : $(agdafiles)
-	$(agda) --html $<
+	$(agda) -i.. --html $<
 
 
 ## Haskell parser
@@ -59,11 +59,11 @@ $(parser) : While/Test.hs While/Par.hs While/Lex.hs
 # Rules for cleaning generated files:
 
 clean :
-	-rm -f While/*.log While/*.aux While/*.hi While/*.o While/*.dvi *.hi *.o
+	-rm -f While/*.log While/*.aux While/*.hi While/*.o While/*.dvi *.hi *.o *.agdai
 
 distclean : clean
 	-rm -f While/Doc.* While/Lex.* While/Par.* While/Layout.* While/Skel.* While/Print.* While/Test.* While/Abs.* While/Test While/ErrM.* While/SharedString.* While/ComposOp.* While/While.dtd While/XML.* While/*.bak
-	-rmdir -p While/
+	-rmdir -p While/ || true
 	-rm -f Main.tar.gz Main
 
 # EOF

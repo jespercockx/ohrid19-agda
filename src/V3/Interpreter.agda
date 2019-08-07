@@ -3,13 +3,13 @@
 -- As computation is not guaranteed to terminate,
 -- execution of statements is placed in the Delay monad.
 
-module Interpreter where
+module V3.Interpreter where
 
 open import Library
-open import WellTypedSyntax
-open import Value
+open import V3.WellTypedSyntax
+open import V3.Value
 
-open import Delay using (Delay; force; later'; runDelay) public
+open import V3.Delay using (Delay; force; later'; runDelay) public
 
 -- Evaluation of expressions in fixed environment ρ.
 

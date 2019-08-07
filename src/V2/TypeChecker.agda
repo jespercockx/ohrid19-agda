@@ -2,12 +2,12 @@
 
 {-# OPTIONS --postfix-projections #-}
 
-module TypeChecker where
+module V2.TypeChecker where
 
 open import Library
 
-import AST as A
-open import WellTypedSyntax
+import V2.AST as A
+open import V2.WellTypedSyntax
 
 -- Names as coming from the abstract syntax are just strings.
 
@@ -48,8 +48,6 @@ open ErrorMonad {E = TypeError}
 
 -- Checking expressions
 ---------------------------------------------------------------------------
-
--- During checking of expressions, the context is fixed.
 
 module CheckExpressions {Γ : Cxt} (γ : TCCxt Γ) where
 
@@ -100,30 +98,6 @@ module CheckExpressions {Γ : Cxt} (γ : TCCxt Γ) where
       e₂' ← checkExp e₂ t
       return (t' , eOp op e₁' e₂')
 
-  mutual
-
-    -- Checking a single statement.
-
-    checkStm : (s : A.Stm) → Error (Stm Γ)
-
-    checkStm (A.sAss x e) = do
-      (t , x') ← lookupVar (idToName x)
-      e' ← checkExp e t
-      return (sAss x' e')
-
-    checkStm (A.sWhile e ss) = do
-      e'  ← checkExp e bool
-      ss' ← checkStms ss
-      return (sWhile e' ss')
-
-    -- Checking a list of statements.
-
-    checkStms : (ss : List A.Stm) → Error (Stms Γ)
-    checkStms []       = return []
-    checkStms (s ∷ ss) = do
-      s' ← checkStm s
-      (s' ∷_) <$> checkStms ss
-
 -- The declaration checker calls the expression checker.
 -- Exported interface of expression checker:
 
@@ -136,9 +110,6 @@ open TCExp
 
 checkExp : ∀{Γ} (e : A.Exp) (t : Type) → TCExp Γ (Exp Γ t)
 checkExp e t .runTCExp γ = CheckExpressions.checkExp γ e t
-
-checkStms : ∀{Γ} (ss : List A.Stm) → TCExp Γ (Stms Γ)
-checkStms ss .runTCExp γ = CheckExpressions.checkStms γ ss
 
 -- Checking declarations.
 ---------------------------------------------------------------------------
@@ -197,7 +168,7 @@ module CheckDeclarations where
   addVar : ∀{Γ} (x : Name) t → TCDecl Γ (t ∷ Γ) ⊤
   addVar {Γ = Γ} x t .runTCDecl γ = ok (_ , (t ↦ x ∷ γ))
 
-  -- Predicting the next shape of the context.
+  -- Computing the final context.
 
   Next : (Γ : Cxt) (s : A.Decl) → Cxt
   Next Γ s = A.declType s ∷ Γ
@@ -232,11 +203,10 @@ module CheckDeclarations where
   checkProgram : (prg : A.Program) (let Γ = Nexts [] (A.theDecls prg))
     → TCDecl [] Γ Program
 
-  checkProgram (A.program ds ss e) = do
+  checkProgram (A.program ds e) = do
     ds' ← checkDecls ds
-    ss' ← lift $ checkStms ss
     e'  ← lift $ checkExp e int
-    return (program ds' ss' e')
+    return (program ds' e')
 
 -- Checking the program.
 ---------------------------------------------------------------------------

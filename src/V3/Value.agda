@@ -1,9 +1,9 @@
 -- Values and primitive operations; environments.
 
-module Value where
+module V3.Value where
 
 open import Library
-open import WellTypedSyntax
+open import V3.WellTypedSyntax
 
 -- Well-typed values.
 

@@ -1,18 +1,18 @@
 -- Type checker and interpreter for WHILE language.
 
-module runwhile where
+module V1.runwhile where
 
 open import Library
-open import WellTypedSyntax using (Program)
-open import TypeChecker     using (checkProgram)
+open import V1.WellTypedSyntax using (Program)
+open import V1.TypeChecker     using (checkProgram)
 
-import AST as A
-import Parser
-open import Interpreter using (runProgram)
+import V1.AST as A
+import V1.Parser as Parser
+open import V1.Interpreter using (runProgram)
 
 -- Other modules, not used here.
-import Value
-import UntypedInterpreter
+import V1.Value
+import V1.UntypedInterpreter
 
 -- Parse.
 

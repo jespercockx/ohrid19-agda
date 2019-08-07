@@ -1,9 +1,9 @@
 -- FFI binding to the Haskell parser for the WHILE language.
 
-module Parser where
+module V3.Parser where
 
 open import Library
-open import AST using (Program)
+open import V3.AST using (Program)
 
 {-# FOREIGN GHC import qualified Data.Text  #-}
 

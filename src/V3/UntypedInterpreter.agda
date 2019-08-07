@@ -4,9 +4,10 @@
 -- * May fail due to scope and other runtime errors.
 -- * while loops may not terminate.
 
+module V3.UntypedInterpreter where
+
 open import Library
-open import AST
-open Integer
+open import V3.AST
 
 -- Untyped values.
 
