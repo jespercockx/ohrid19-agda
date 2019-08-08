@@ -1,0 +1,27 @@
+<!DOCTYPE HTML>
+<html><head><meta charset="utf-8"><title>V3.Parser</title><link rel="stylesheet" href="Agda.css"></head><body><pre class="Agda"><a id="1" class="Comment">-- FFI binding to the Haskell parser for the WHILE language.</a>
+
+<a id="63" class="Keyword">module</a> <a id="70" href="V3.Parser.html" class="Module">V3.Parser</a> <a id="80" class="Keyword">where</a>
+
+<a id="87" class="Keyword">open</a> <a id="92" class="Keyword">import</a> <a id="99" href="Library.html" class="Module">Library</a>
+<a id="107" class="Keyword">open</a> <a id="112" class="Keyword">import</a> <a id="119" href="V3.AST.html" class="Module">V3.AST</a> <a id="126" class="Keyword">using</a> <a id="132" class="Symbol">(</a><a id="133" href="V3.AST.html#1334" class="Record">Program</a><a id="140" class="Symbol">)</a>
+
+<a id="143" class="Symbol">{-#</a> <a id="147" class="Keyword">FOREIGN</a> <a id="155" class="Pragma">GHC</a> <a id="159" class="Pragma">import</a> <a id="166" class="Pragma">qualified</a> <a id="176" class="Pragma">Data.Text</a>  <a id="187" class="Symbol">#-}</a>
+
+<a id="192" class="Symbol">{-#</a> <a id="196" class="Keyword">FOREIGN</a> <a id="204" class="Pragma">GHC</a> <a id="208" class="Pragma">import</a> <a id="215" class="Pragma">While.Abs</a>  <a id="226" class="Pragma">(Program)</a>           <a id="246" class="Symbol">#-}</a>
+<a id="250" class="Symbol">{-#</a> <a id="254" class="Keyword">FOREIGN</a> <a id="262" class="Pragma">GHC</a> <a id="266" class="Pragma">import</a> <a id="273" class="Pragma">While.ErrM</a> <a id="284" class="Pragma">(Err(Ok,</a> <a id="293" class="Pragma">Bad))</a>      <a id="304" class="Symbol">#-}</a>
+<a id="308" class="Symbol">{-#</a> <a id="312" class="Keyword">FOREIGN</a> <a id="320" class="Pragma">GHC</a> <a id="324" class="Pragma">import</a> <a id="331" class="Pragma">While.Par</a>  <a id="342" class="Pragma">(pProgram,</a> <a id="353" class="Pragma">myLexer)</a> <a id="362" class="Symbol">#-}</a>
+
+<a id="367" class="Comment">-- Error monad of BNFC</a>
+
+<a id="391" class="Keyword">data</a> <a id="Err"></a><a id="396" href="V3.Parser.html#396" class="Datatype">Err</a> <a id="400" class="Symbol">(</a><a id="401" href="V3.Parser.html#401" class="Bound">A</a> <a id="403" class="Symbol">:</a> <a id="405" class="PrimitiveType">Set</a><a id="408" class="Symbol">)</a> <a id="410" class="Symbol">:</a> <a id="412" class="PrimitiveType">Set</a> <a id="416" class="Keyword">where</a>
+  <a id="Err.ok"></a><a id="424" href="V3.Parser.html#424" class="InductiveConstructor">ok</a>   <a id="429" class="Symbol">:</a> <a id="431" href="V3.Parser.html#401" class="Bound">A</a> <a id="433" class="Symbol">→</a> <a id="435" href="V3.Parser.html#396" class="Datatype">Err</a> <a id="439" href="V3.Parser.html#401" class="Bound">A</a>
+  <a id="Err.bad"></a><a id="443" href="V3.Parser.html#443" class="InductiveConstructor">bad</a>  <a id="448" class="Symbol">:</a> <a id="450" href="Agda.Builtin.List.html#121" class="Datatype">List</a> <a id="455" href="Agda.Builtin.Char.html#200" class="Postulate">Char</a> <a id="460" class="Symbol">→</a> <a id="462" href="V3.Parser.html#396" class="Datatype">Err</a> <a id="466" href="V3.Parser.html#401" class="Bound">A</a>
+
+<a id="469" class="Symbol">{-#</a> <a id="473" class="Keyword">COMPILE</a> <a id="481" class="Pragma">GHC</a> <a id="485" href="V3.Parser.html#396" class="Datatype">Err</a> <a id="489" class="Pragma">=</a> <a id="491" class="Pragma">data</a> <a id="496" class="Pragma">Err</a> <a id="500" class="Pragma">(</a> <a id="502" class="Pragma">Ok</a> <a id="505" class="Pragma">|</a> <a id="507" class="Pragma">Bad</a> <a id="511" class="Pragma">)</a> <a id="513" class="Symbol">#-}</a>
+
+<a id="518" class="Keyword">postulate</a>
+  <a id="parse"></a><a id="530" href="V3.Parser.html#530" class="Postulate">parse</a> <a id="536" class="Symbol">:</a> <a id="538" href="Agda.Builtin.String.html#247" class="Postulate">String</a> <a id="545" class="Symbol">→</a> <a id="547" href="V3.Parser.html#396" class="Datatype">Err</a> <a id="551" href="V3.AST.html#1334" class="Record">Program</a>
+
+<a id="560" class="Symbol">{-#</a> <a id="564" class="Keyword">COMPILE</a> <a id="572" class="Pragma">GHC</a> <a id="576" href="V3.Parser.html#530" class="Postulate">parse</a> <a id="582" class="Pragma">=</a> <a id="584" class="Pragma">pProgram</a> <a id="593" class="Pragma">.</a> <a id="595" class="Pragma">myLexer</a> <a id="603" class="Pragma">.</a> <a id="605" class="Pragma">Data.Text.unpack</a> <a id="622" class="Symbol">#-}</a>
+</pre></body></html>
