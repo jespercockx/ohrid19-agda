@@ -34,8 +34,10 @@ Links
   [V2](src/V1/html/V2.runwhile.html)
   [V3](src/V1/html/V3.runwhile.html)
 
-* This README on as Webpage on
+<!--
+* This README as a Webpage on
   [github.io](https://jespercockx.github.io/ohrid19-agda/)
+-->
 
 Prerequisites
 -------------
@@ -51,7 +53,7 @@ script](https://github.com/jespercockx/ohrid19-agda/blob/master/setup.sh)
 that installs all of these on a fresh installation of Ubuntu 18.04 or
 later. Alternatively, below are step-by-step instructions.
 
-### Installing Agda from Cabal on Ubuntu
+### Installing Agda on Ubuntu
 
 First, make sure you have git, cabal, and emacs installed. You also
 need the `zlib` c library. On Ubuntu and related systems, the
@@ -77,6 +79,20 @@ cabal get Agda && cd Agda-2.6.0.1 && cabal install
 agda-mode setup
 ```
 
+### Installing Agda on Mac
+
+Follow the instructions in the [user
+manual](https://agda.readthedocs.io/en/v2.6.0.1/getting-started/installation.html#os-x). Alternatively,
+you can install the Haskell Platform and follow the instructions
+above.
+
+### Installing Agda on Windows
+
+Follow the [instructions by Péter
+Diviánszky](https://people.inf.elte.hu/divip/AgdaTutorial/Installation.html). Alternatively,
+install a virtual machine with Ubuntu and follow the instructions
+above.
+
 ### Installing the standard library
 
 To install the Agda standard library:
@@ -94,3 +110,15 @@ echo standard-library >> $HOME/.agda/defaults
 ```bash
 cabal install BNFC
 ```
+
+
+Further reading
+---------------
+
+- [Agda documentation](https://agda.readthedocs.io/en/v2.6.0.1/)
+- [An introduction to dependent types in Agda](http://www2.tcs.ifi.lmu.de/~abel/DepTypes.pdf) by Andreas Abel
+- [Agda tutorial](https://people.inf.elte.hu/divip/AgdaTutorial/Index.html) by Péter Diviánszky
+- [Dependently typed programming in Agda (video lectures)](https://www.youtube.com/playlist?list=PL44F162A8B8CB7C87) by Conor McBride
+- [Programming language foundations in Agda (online book)](https://plfa.github.io/)
+- [Type-driven development in Idris (book)](https://www.manning.com/books/type-driven-development-with-idris)
+- [Certified programming with dependent types (book)](http://adam.chlipala.net/cpdt/)

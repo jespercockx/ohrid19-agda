@@ -116,7 +116,6 @@ with non-termination in Agda, the Delay monad.
 **Exercise**: add the following language constructions: boolean
   conjunction ('and'), integer subtraction ('minus'), conditionals
   ('if/then/else'). (TODO: remove these from the provided code)
-  Also update the functions in
 
 BNFC and the Haskell FFI
 ------------------------
