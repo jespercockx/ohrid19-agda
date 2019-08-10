@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="author" content="Jesper Cockx">
+  <meta name="dcterms.date" content="2019-08-31">
+  <title>Correct-by-construction programming in Agda</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.7.0//css/reveal.css">
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(data-line-number);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.7.0//css/theme/black.css" id="theme">
+  <link rel="stylesheet" href="white.css"/>
+  <link rel="stylesheet" href="Agda.css"/>
+  <link rel="stylesheet" href="patchTheme.css"/>
+  <!-- Printing and PDF exports -->
+  <script>
+    var link = document.createElement( 'link' );
+    link.rel = 'stylesheet';
+    link.type = 'text/css';
+    link.href = window.location.search.match( /print-pdf/gi ) ? 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.7.0//css/print/pdf.css' : 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.7.0//css/print/paper.css';
+    document.getElementsByTagName( 'head' )[0].appendChild( link );
+  </script>
+  <!--[if lt IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.7.0//lib/js/html5shiv.js"></script>
+  <![endif]-->
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide">
+  <h1 class="title">Correct-by-construction programming in Agda</h1>
+  <p class="subtitle">Lecture 1: Getting started with Agda</p>
+  <p class="author">Jesper Cockx</p>
+  <p class="date">31 August 2019</p>
+</section>
+
+<section><section id="correct-by-construction-programming" class="title-slide slide level1"><h1>Correct-by-construction programming</h1></section><section id="section" class="slide level2">
+<h2></h2>
+<p>“Program testing can be used to show the presence of bugs, but never to show their absence!” –Edsger Dijkstra</p>
+<p>“A computer will do what you tell it to do, but that may be much different from what you had in mind.” –Joseph Weizenbaum</p>
+</section><section id="why-use-dependent-types" class="slide level2">
+<h2>Why use dependent types?</h2>
+<p>With dependent types, we can <strong>statically verify</strong> that a program satisfies a given correctness property.</p>
+<p>Verification is <strong>built into</strong> the language itself.</p>
+</section><section id="two-approaches-to-verification-with-dependent-types" class="slide level2">
+<h2>Two approaches to verification with dependent types:</h2>
+<ul>
+<li><strong>Extrinsic approach</strong>: first write the program and then prove correctness</li>
+<li><strong>Intrinsic approach</strong>: first define the <em>type</em> of programs that satisfy the correctness property and then write the program that inhabits this type</li>
+</ul>
+<p>The intrinsic approach is also called <strong>correct-by-construction</strong> programming.</p>
+</section><section id="example-of-extrinsic-verification" class="slide level2">
+<h2>Example of extrinsic verification</h2>
+<!--
+<pre class="Agda"><a id="1131" class="Keyword">open</a> <a id="1136" class="Keyword">import</a> <a id="1143" href="Data.Bool.Base.html" class="Module">Data.Bool.Base</a> <a id="1158" class="Keyword">using</a> <a id="1164" class="Symbol">(</a><a id="1165" href="Agda.Builtin.Bool.html#135" class="Datatype">Bool</a><a id="1169" class="Symbol">;</a> <a id="1171" href="Agda.Builtin.Bool.html#160" class="InductiveConstructor">true</a><a id="1175" class="Symbol">;</a> <a id="1177" href="Agda.Builtin.Bool.html#154" class="InductiveConstructor">false</a><a id="1182" class="Symbol">)</a>
+<a id="1184" class="Keyword">open</a> <a id="1189" class="Keyword">import</a> <a id="1196" href="Data.Char.Base.html" class="Module">Data.Char.Base</a> <a id="1211" class="Keyword">using</a> <a id="1217" class="Symbol">(</a><a id="1218" href="Agda.Builtin.Char.html#200" class="Postulate">Char</a><a id="1222" class="Symbol">)</a>
+<a id="1224" class="Keyword">open</a> <a id="1229" class="Keyword">import</a> <a id="1236" href="Data.Integer.Base.html" class="Module">Data.Integer.Base</a> <a id="1254" class="Keyword">using</a> <a id="1260" class="Symbol">(</a><a id="1261" href="Agda.Builtin.Int.html#219" class="Datatype">ℤ</a><a id="1262" class="Symbol">)</a>
+<a id="1264" class="Keyword">open</a> <a id="1269" class="Keyword">import</a> <a id="1276" href="Data.List.Base.html" class="Module">Data.List.Base</a> <a id="1291" class="Keyword">using</a> <a id="1297" class="Symbol">(</a><a id="1298" href="Agda.Builtin.List.html#121" class="Datatype">List</a><a id="1302" class="Symbol">;</a> <a id="1304" href="Data.List.Base.html#8786" class="InductiveConstructor">[]</a><a id="1306" class="Symbol">;</a> <a id="1308" href="Agda.Builtin.List.html#173" class="InductiveConstructor Operator">_∷_</a><a id="1311" class="Symbol">)</a>
+<a id="1313" class="Keyword">open</a> <a id="1318" class="Keyword">import</a> <a id="1325" href="Data.Maybe.Base.html" class="Module">Data.Maybe.Base</a> <a id="1341" class="Keyword">using</a> <a id="1347" class="Symbol">(</a><a id="1348" href="Data.Maybe.Base.html#795" class="Datatype">Maybe</a><a id="1353" class="Symbol">;</a> <a id="1355" href="Data.Maybe.Base.html#859" class="InductiveConstructor">nothing</a><a id="1362" class="Symbol">;</a> <a id="1364" href="Data.Maybe.Base.html#829" class="InductiveConstructor">just</a><a id="1368" class="Symbol">)</a>
+<a id="1370" class="Keyword">open</a> <a id="1375" class="Keyword">import</a> <a id="1382" href="Data.Nat.Base.html" class="Module">Data.Nat.Base</a> <a id="1396" class="Keyword">using</a> <a id="1402" class="Symbol">(</a><a id="1403" href="Agda.Builtin.Nat.html#165" class="Datatype">ℕ</a><a id="1404" class="Symbol">;</a> <a id="1406" href="Agda.Builtin.Nat.html#183" class="InductiveConstructor">zero</a><a id="1410" class="Symbol">;</a> <a id="1412" href="Agda.Builtin.Nat.html#196" class="InductiveConstructor">suc</a><a id="1415" class="Symbol">;</a> <a id="1417" href="Agda.Builtin.Nat.html#298" class="Primitive Operator">_+_</a><a id="1420" class="Symbol">;</a> <a id="1422" href="Agda.Builtin.Nat.html#501" class="Primitive Operator">_*_</a><a id="1425" class="Symbol">;</a> <a id="1427" href="Data.Nat.Base.html#1005" class="Function Operator">_&lt;_</a><a id="1430" class="Symbol">)</a>
+<a id="1432" class="Keyword">open</a> <a id="1437" class="Keyword">import</a> <a id="1444" href="Data.Product.html" class="Module">Data.Product</a> <a id="1457" class="Keyword">using</a> <a id="1463" class="Symbol">(</a><a id="1464" href="Data.Product.html#1162" class="Function Operator">_×_</a><a id="1467" class="Symbol">;</a> <a id="1469" href="Agda.Builtin.Sigma.html#209" class="InductiveConstructor Operator">_,_</a><a id="1472" class="Symbol">)</a>
+<a id="1474" class="Keyword">open</a> <a id="1479" class="Keyword">import</a> <a id="1486" href="Agda.Builtin.Equality.html" class="Module">Agda.Builtin.Equality</a> <a id="1508" class="Keyword">using</a> <a id="1514" class="Symbol">(</a><a id="1515" href="Agda.Builtin.Equality.html#125" class="Datatype Operator">_≡_</a><a id="1518" class="Symbol">;</a> <a id="1520" href="Agda.Builtin.Equality.html#182" class="InductiveConstructor">refl</a><a id="1524" class="Symbol">)</a>
+
+<a id="1527" class="Keyword">postulate</a>
+  <a id="⋯"></a><a id="1539" href="slides1.html#1539" class="Postulate">⋯</a> <a id="1541" class="Symbol">:</a> <a id="1543" class="Symbol">∀</a> <a id="1545" class="Symbol">{</a><a id="1546" href="slides1.html#1546" class="Bound">ℓ</a><a id="1547" class="Symbol">}</a> <a id="1549" class="Symbol">{</a><a id="1550" href="slides1.html#1550" class="Bound">A</a> <a id="1552" class="Symbol">:</a> <a id="1554" class="PrimitiveType">Set</a> <a id="1558" href="slides1.html#1546" class="Bound">ℓ</a><a id="1559" class="Symbol">}</a> <a id="1561" class="Symbol">→</a> <a id="1563" href="slides1.html#1550" class="Bound">A</a>
+
+<a id="1566" class="Keyword">module</a> <a id="Intro"></a><a id="1573" href="slides1.html#1573" class="Module">Intro</a> <a id="1579" class="Keyword">where</a>
+</pre>-->
+<pre class="Agda">  <a id="1604" class="Keyword">module</a> <a id="Extrinsic"></a><a id="1611" href="slides1.html#1611" class="Module">Extrinsic</a> <a id="1621" class="Keyword">where</a>
+    <a id="Intro.Extrinsic.sort"></a><a id="1631" href="slides1.html#1631" class="Function">sort</a> <a id="1636" class="Symbol">:</a> <a id="1638" href="Agda.Builtin.List.html#121" class="Datatype">List</a> <a id="1643" href="Agda.Builtin.Nat.html#165" class="Datatype">ℕ</a> <a id="1645" class="Symbol">→</a> <a id="1647" href="Agda.Builtin.List.html#121" class="Datatype">List</a> <a id="1652" href="Agda.Builtin.Nat.html#165" class="Datatype">ℕ</a>
+    <a id="1658" href="slides1.html#1631" class="Function">sort</a> <a id="1663" class="Symbol">=</a> <a id="1665" href="slides1.html#1539" class="Postulate">⋯</a>
+
+    <a id="Intro.Extrinsic.IsSorted"></a><a id="1672" href="slides1.html#1672" class="Function">IsSorted</a> <a id="1681" class="Symbol">:</a> <a id="1683" href="Agda.Builtin.List.html#121" class="Datatype">List</a> <a id="1688" href="Agda.Builtin.Nat.html#165" class="Datatype">ℕ</a> <a id="1690" class="Symbol">→</a> <a id="1692" class="PrimitiveType">Set</a>
+    <a id="1700" href="slides1.html#1672" class="Function">IsSorted</a> <a id="1709" class="Symbol">=</a> <a id="1711" href="slides1.html#1539" class="Postulate">⋯</a>
+
+    <a id="Intro.Extrinsic.sort-is-sorted"></a><a id="1718" href="slides1.html#1718" class="Function">sort-is-sorted</a> <a id="1733" class="Symbol">:</a> <a id="1735" class="Symbol">∀</a> <a id="1737" href="slides1.html#1737" class="Bound">xs</a> <a id="1740" class="Symbol">→</a> <a id="1742" href="slides1.html#1672" class="Function">IsSorted</a> <a id="1751" class="Symbol">(</a><a id="1752" href="slides1.html#1631" class="Function">sort</a> <a id="1757" href="slides1.html#1737" class="Bound">xs</a><a id="1759" class="Symbol">)</a>
+    <a id="1765" href="slides1.html#1718" class="Function">sort-is-sorted</a> <a id="1780" class="Symbol">=</a> <a id="1782" href="slides1.html#1539" class="Postulate">⋯</a>
+</pre>
+</section><section id="example-of-intrinsic-verification" class="slide level2">
+<h2>Example of intrinsic verification</h2>
+<pre class="Agda">  <a id="1837" class="Keyword">module</a> <a id="Intrinsic"></a><a id="1844" href="slides1.html#1844" class="Module">Intrinsic</a> <a id="1854" class="Keyword">where</a>
+    <a id="Intro.Intrinsic.SortedList"></a><a id="1864" href="slides1.html#1864" class="Function">SortedList</a> <a id="1875" class="Symbol">:</a> <a id="1877" class="PrimitiveType">Set</a>
+    <a id="1885" href="slides1.html#1864" class="Function">SortedList</a> <a id="1896" class="Symbol">=</a> <a id="1898" href="slides1.html#1539" class="Postulate">⋯</a>
+
+    <a id="Intro.Intrinsic.sort"></a><a id="1905" href="slides1.html#1905" class="Function">sort</a> <a id="1910" class="Symbol">:</a> <a id="1912" href="Agda.Builtin.List.html#121" class="Datatype">List</a> <a id="1917" href="Agda.Builtin.Nat.html#165" class="Datatype">ℕ</a> <a id="1919" class="Symbol">→</a> <a id="1921" href="slides1.html#1864" class="Function">SortedList</a>
+    <a id="1936" href="slides1.html#1905" class="Function">sort</a> <a id="1941" class="Symbol">=</a> <a id="1943" href="slides1.html#1539" class="Postulate">⋯</a>
+</pre>
+</section><section id="correct-by-construction-programming-1" class="slide level2">
+<h2>Correct-by-construction programming</h2>
+<p>Building invariants into the <em>types</em> of our program, to make it <strong>impossible</strong> to write an incorrect program in the first place.</p>
+<div class="fragment">
+<p>No proving allowed!</p>
+</div>
+</section><section id="running-example" class="slide level2">
+<h2>Running example</h2>
+<p>Implementation of a correct-by-construction <strong>typechecker</strong> + <strong>interpreter</strong> for a C-like language (WHILE)</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode c"><code class="sourceCode c"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="dt">int</span> main () {</a>
+<a class="sourceLine" id="cb1-2" data-line-number="2">  <span class="dt">int</span> n   = <span class="dv">100</span>;</a>
+<a class="sourceLine" id="cb1-3" data-line-number="3">  <span class="dt">int</span> sum = <span class="dv">0</span>;</a>
+<a class="sourceLine" id="cb1-4" data-line-number="4">  <span class="dt">int</span> k   = <span class="dv">0</span>;</a>
+<a class="sourceLine" id="cb1-5" data-line-number="5">  <span class="cf">while</span> (n &gt; k) {</a>
+<a class="sourceLine" id="cb1-6" data-line-number="6">    k   = k   + <span class="dv">1</span>;</a>
+<a class="sourceLine" id="cb1-7" data-line-number="7">    sum = sum + k;</a>
+<a class="sourceLine" id="cb1-8" data-line-number="8">  }</a>
+<a class="sourceLine" id="cb1-9" data-line-number="9">  printInt(sum);</a>
+<a class="sourceLine" id="cb1-10" data-line-number="10">}</a></code></pre></div>
+</section><section id="overview-of-this-course" class="slide level2">
+<h2>Overview of this course</h2>
+<ul>
+<li><strong>Lecture 1</strong>: Getting started with Agda</li>
+<li><strong>Lecture 2</strong>: Indexed datatypes and dependent pattern matching</li>
+<li><strong>Lecture 3</strong>: Practical programming: instance arguments, do notation, Haskell FFI</li>
+<li><strong>Lecture 4</strong>: (Non-)termination: termination checker, coinduction, sized types</li>
+</ul>
+</section></section>
+<section><section id="introduction-to-agda" class="title-slide slide level1"><h1>Introduction to Agda</h1></section><section id="what-is-agda" class="slide level2">
+<h2>What is Agda?</h2>
+<p>Agda is…</p>
+<ol type="1">
+<li>A strongly typed functional programming language in the tradition of Haskell</li>
+<li>An interactive theorem prover in the tradition of Martin-Löf</li>
+</ol>
+<p>We will mostly use 1. in this course.</p>
+</section><section id="installation" class="slide level2">
+<h2>Installation</h2>
+<p>For this tutorial, you will need to install <strong>Agda</strong>, the <strong>Agda standard library</strong>, and the <strong>BNFC</strong> tool.</p>
+<ul>
+<li>Agda: <a href="https://github.com/agda/agda">github.com/agda/agda</a></li>
+<li>Agda standard library: <a href="https://github.com/agda/agda-stdlib">github.com/agda/agda-stdlib</a></li>
+<li>BNFC: <a href="https://github.com/BNFC/bnfc">github.com/BNFC/bnfc</a></li>
+</ul>
+<p>Installation instructions:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="fu">git</span> clone https://github.com/jespercockx/ohrid19-agda</a>
+<a class="sourceLine" id="cb2-2" data-line-number="2"><span class="bu">cd</span> ohrid19-agda</a>
+<a class="sourceLine" id="cb2-3" data-line-number="3"><span class="ex">./setup.sh</span></a></code></pre></div>
+</section><section id="main-features-of-agda" class="slide level2">
+<h2>Main features of Agda</h2>
+<ul>
+<li>Dependent types</li>
+<li>Indexed datatypes and dependent pattern matching</li>
+<li>Termination checking and productivity checking</li>
+<li>A universe hierachy with universe polymorphism</li>
+<li>Implicit arguments</li>
+<li>Parametrized modules (~ ML functors)</li>
+</ul>
+</section><section id="other-lesser-well-known-features-of-agda" class="slide level2">
+<h2>Other lesser well-known features of Agda</h2>
+<ul>
+<li>Record types with copattern matching</li>
+<li>Coinductive datatypes</li>
+<li>Sized types</li>
+<li>Instance arguments (~ Haskell’s typeclasses)</li>
+<li>A FFI to Haskell</li>
+</ul>
+<p>We will use many of these in the course of this tutorial!</p>
+</section><section id="emacs-mode-for-agda" class="slide level2">
+<h2>Emacs mode for Agda</h2>
+<p>Basic commands:</p>
+<ul>
+<li><strong>C-c C-l</strong>: typecheck and highlight the current file</li>
+<li><strong>C-c C-d</strong>: deduce the type of an expression</li>
+<li><strong>C-c C-n</strong>: evaluate an expression to normal form</li>
+</ul>
+<p>Programs may contain <strong>holes</strong> (? or {! !}).</p>
+<ul>
+<li><strong>C-c C-,</strong>: get information about the hole under the cursor</li>
+<li><strong>C-c C-space</strong>: give a solution</li>
+<li><strong>C-c C-r</strong>: <em>refine</em> the hole
+<ul>
+<li>Introduce a lambda or constructor</li>
+<li>Apply given function to some new holes</li>
+</ul></li>
+<li><strong>C-c C-c</strong>: case split on a variable</li>
+</ul>
+</section></section>
+<section><section id="demo-time" class="title-slide slide level1"><h1>Demo time!</h1></section><section id="testing-functions-using-the-identity-type" class="slide level2">
+<h2>Testing functions using the identity type</h2>
+<p>The identity type <code>x ≡ y</code> is inhabited by <code>refl</code> iff <code>x</code> and <code>y</code> are (definitionally) equal.</p>
+<p>We can use this to write <em>checked</em> tests for our Agda functions!</p>
+<pre class="Agda"><a id="testPlus"></a><a id="4659" href="slides1.html#4659" class="Function">testPlus</a> <a id="4668" class="Symbol">:</a> <a id="4670" class="Number">1</a> <a id="4672" href="Agda.Builtin.Nat.html#298" class="Primitive Operator">+</a> <a id="4674" class="Number">1</a> <a id="4676" href="Agda.Builtin.Equality.html#125" class="Datatype Operator">≡</a> <a id="4678" class="Number">2</a>
+<a id="4680" href="slides1.html#4659" class="Function">testPlus</a> <a id="4689" class="Symbol">=</a> <a id="4691" href="Agda.Builtin.Equality.html#182" class="InductiveConstructor">refl</a>
+</pre>
+</section><section id="abstract-syntax-tree-of-while" class="slide level2">
+<h2>Abstract syntax tree of WHILE</h2>
+<pre class="Agda"><a id="4739" class="Keyword">data</a> <a id="Id"></a><a id="4744" href="slides1.html#4744" class="Datatype">Id</a> <a id="4747" class="Symbol">:</a> <a id="4749" class="PrimitiveType">Set</a> <a id="4753" class="Keyword">where</a>
+  <a id="Id.mkId"></a><a id="4761" href="slides1.html#4761" class="InductiveConstructor">mkId</a> <a id="4766" class="Symbol">:</a> <a id="4768" href="Agda.Builtin.List.html#121" class="Datatype">List</a> <a id="4773" href="Agda.Builtin.Char.html#200" class="Postulate">Char</a> <a id="4778" class="Symbol">→</a> <a id="4780" href="slides1.html#4744" class="Datatype">Id</a>
+
+<a id="4784" class="Keyword">data</a> <a id="Exp"></a><a id="4789" href="slides1.html#4789" class="Datatype">Exp</a> <a id="4793" class="Symbol">:</a> <a id="4795" class="PrimitiveType">Set</a> <a id="4799" class="Keyword">where</a>
+  <a id="Exp.eId"></a><a id="4807" href="slides1.html#4807" class="InductiveConstructor">eId</a>       <a id="4817" class="Symbol">:</a> <a id="4819" class="Symbol">(</a><a id="4820" href="slides1.html#4820" class="Bound">x</a> <a id="4822" class="Symbol">:</a> <a id="4824" href="slides1.html#4744" class="Datatype">Id</a><a id="4826" class="Symbol">)</a>      <a id="4833" class="Symbol">→</a> <a id="4835" href="slides1.html#4789" class="Datatype">Exp</a>
+  <a id="Exp.eInt"></a><a id="4841" href="slides1.html#4841" class="InductiveConstructor">eInt</a>      <a id="4851" class="Symbol">:</a> <a id="4853" class="Symbol">(</a><a id="4854" href="slides1.html#4854" class="Bound">i</a> <a id="4856" class="Symbol">:</a> <a id="4858" href="Agda.Builtin.Int.html#219" class="Datatype">ℤ</a><a id="4859" class="Symbol">)</a>       <a id="4867" class="Symbol">→</a> <a id="4869" href="slides1.html#4789" class="Datatype">Exp</a>
+  <a id="Exp.eBool"></a><a id="4875" href="slides1.html#4875" class="InductiveConstructor">eBool</a>     <a id="4885" class="Symbol">:</a> <a id="4887" class="Symbol">(</a><a id="4888" href="slides1.html#4888" class="Bound">b</a> <a id="4890" class="Symbol">:</a> <a id="4892" href="Agda.Builtin.Bool.html#135" class="Datatype">Bool</a><a id="4896" class="Symbol">)</a>    <a id="4901" class="Symbol">→</a> <a id="4903" href="slides1.html#4789" class="Datatype">Exp</a>
+  <a id="Exp.ePlus"></a><a id="4909" href="slides1.html#4909" class="InductiveConstructor">ePlus</a>     <a id="4919" class="Symbol">:</a> <a id="4921" class="Symbol">(</a><a id="4922" href="slides1.html#4922" class="Bound">e</a> <a id="4924" href="slides1.html#4924" class="Bound">e&#39;</a> <a id="4927" class="Symbol">:</a> <a id="4929" href="slides1.html#4789" class="Datatype">Exp</a><a id="4932" class="Symbol">)</a>  <a id="4935" class="Symbol">→</a> <a id="4937" href="slides1.html#4789" class="Datatype">Exp</a>
+  <a id="Exp.eGt"></a><a id="4943" href="slides1.html#4943" class="InductiveConstructor">eGt</a>       <a id="4953" class="Symbol">:</a> <a id="4955" class="Symbol">(</a><a id="4956" href="slides1.html#4956" class="Bound">e</a> <a id="4958" href="slides1.html#4958" class="Bound">e&#39;</a> <a id="4961" class="Symbol">:</a> <a id="4963" href="slides1.html#4789" class="Datatype">Exp</a><a id="4966" class="Symbol">)</a>  <a id="4969" class="Symbol">→</a> <a id="4971" href="slides1.html#4789" class="Datatype">Exp</a>
+  <a id="Exp.eAnd"></a><a id="4977" href="slides1.html#4977" class="InductiveConstructor">eAnd</a>      <a id="4987" class="Symbol">:</a> <a id="4989" class="Symbol">(</a><a id="4990" href="slides1.html#4990" class="Bound">e</a> <a id="4992" href="slides1.html#4992" class="Bound">e&#39;</a> <a id="4995" class="Symbol">:</a> <a id="4997" href="slides1.html#4789" class="Datatype">Exp</a><a id="5000" class="Symbol">)</a>  <a id="5003" class="Symbol">→</a> <a id="5005" href="slides1.html#4789" class="Datatype">Exp</a>
+</pre>
+</section><section id="consistency-checks" class="slide level2">
+<h2>Consistency checks</h2>
+<p>To maintain logical consistency, Agda does:</p>
+<ul>
+<li>Coverage checking</li>
+<li>Termination checking</li>
+<li>Positivity checking</li>
+<li>Universe checking</li>
+</ul>
+</section><section id="exercise" class="slide level2">
+<h2>Exercise</h2>
+<p>Implement an evaluation function for expressions.</p>
+<pre class="Agda"><a id="5236" class="Keyword">data</a> <a id="Value"></a><a id="5241" href="slides1.html#5241" class="Datatype">Value</a> <a id="5247" class="Symbol">:</a> <a id="5249" class="PrimitiveType">Set</a> <a id="5253" class="Keyword">where</a>
+  <a id="Value.valInt"></a><a id="5261" href="slides1.html#5261" class="InductiveConstructor">valInt</a>   <a id="5270" class="Symbol">:</a> <a id="5272" class="Symbol">(</a><a id="5273" href="slides1.html#5273" class="Bound">i</a> <a id="5275" class="Symbol">:</a> <a id="5277" href="Agda.Builtin.Int.html#219" class="Datatype">ℤ</a><a id="5278" class="Symbol">)</a> <a id="5280" class="Symbol">→</a> <a id="5282" href="slides1.html#5241" class="Datatype">Value</a>
+  <a id="Value.valBool"></a><a id="5290" href="slides1.html#5290" class="InductiveConstructor">valBool</a>  <a id="5299" class="Symbol">:</a> <a id="5301" class="Symbol">(</a><a id="5302" href="slides1.html#5302" class="Bound">b</a> <a id="5304" class="Symbol">:</a> <a id="5306" href="Agda.Builtin.Bool.html#135" class="Datatype">Bool</a><a id="5310" class="Symbol">)</a> <a id="5312" class="Symbol">→</a> <a id="5314" href="slides1.html#5241" class="Datatype">Value</a>
+  <a id="Value.valError"></a><a id="5322" href="slides1.html#5322" class="InductiveConstructor">valError</a> <a id="5331" class="Symbol">:</a> <a id="5333" href="slides1.html#5241" class="Datatype">Value</a>
+
+<a id="eval"></a><a id="5340" href="slides1.html#5340" class="Function">eval</a> <a id="5345" class="Symbol">:</a> <a id="5347" href="slides1.html#4789" class="Datatype">Exp</a> <a id="5351" class="Symbol">→</a> <a id="5353" href="slides1.html#5241" class="Datatype">Value</a>
+<a id="5359" href="slides1.html#5340" class="Function">eval</a> <a id="5364" class="Symbol">=</a> <a id="5366" href="slides1.html#1539" class="Postulate">⋯</a>
+</pre>
+</section></section>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.7.0//lib/js/head.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.7.0//js/reveal.js"></script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        // Push each slide change to the browser history
+        history: true,
+        // Vertical centering of slides
+        center: false,
+        // Transition style
+        transition: 'linear', // none/fade/slide/convex/concave/zoom
+        // The "normal" size of the presentation, aspect ratio will be preserved
+        // when the presentation is scaled to fit different resolutions. Can be
+        // specified using percentage units.
+        width: 1280,
+        height: 720,
+        // Factor of the display size that should remain empty around the content
+        margin: 0.2,
+        math: {
+          mathjax: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js',
+          config: 'TeX-AMS_HTML-full',
+          tex2jax: {
+            inlineMath: [['\\(','\\)']],
+            displayMath: [['\\[','\\]']],
+            balanceBraces: true,
+            processEscapes: false,
+            processRefs: true,
+            processEnvironments: true,
+            preview: 'TeX',
+            skipTags: ['script','noscript','style','textarea','pre','code'],
+            ignoreClass: 'tex2jax_ignore',
+            processClass: 'tex2jax_process'
+          },
+        },
+
+        // Optional reveal.js plugins
+        dependencies: [
+          { src: 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.7.0//lib/js/classList.js', condition: function() { return !document.body.classList; } },
+          { src: 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.7.0//plugin/zoom-js/zoom.js', async: true },
+          { src: 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.7.0//plugin/math/math.js', async: true },
+          { src: 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.7.0//plugin/notes/notes.js', async: true }
+        ]
+      });
+    </script>
+    </body>
+</html>

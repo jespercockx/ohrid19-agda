@@ -5,15 +5,17 @@ agda=agda --html-highlight=auto
 
 patchTheme=patchTheme.css
 
-default: slides.html
+default: slides1.html
+
+REVEALJS_URL=https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.7.0/
 
 vpath reveal.js $(HOME) .
 
-slides.html: _build/slides.md reveal.js theme.css Agda.css Makefile $(patchTheme)
-	pandoc -t revealjs -V revealjs-url=https://cdn.jsdelivr.net/npm/reveal.js -V theme="white" --css=Agda.css --css=$(patchTheme) --mathjax -s $< -o $@
+%.html: _build/%.md reveal.js white.css $(patchTheme) Agda.css Makefile $(patchTheme)
+	pandoc -t revealjs -V revealjs-url=$(REVEALJS_URL) --theme="white" --css=Agda.css --css=$(patchTheme) --mathjax -s $< -o $@
 
-_build/slides.md: slides.lagda.md
-	$(agda) --html --html-dir=_build $<
+_build/%.md: %.lagda.md
+	$(agda) --html --html-dir=_build --html-highlight=auto $<
 
 ./reveal.js:
 	git clone https://github.com/hakimel/reveal.js
