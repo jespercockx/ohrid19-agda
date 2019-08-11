@@ -16,7 +16,7 @@ code { color: #0000CD }
 .reveal .slide h2 { text-align: left; } /* H2 titles */
 
 /* Text */
-p  { text-align: left; }
+section  { text-align: left; }
 
 /* NO EFFECT:
 ul { text-align: left; }
