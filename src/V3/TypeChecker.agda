@@ -46,20 +46,25 @@ instance
 
 open ErrorMonad {E = TypeError}
 
+-- Checking variables
+---------------------------------------------------------------------------
+
+lookupVar : {Γ : Cxt} (γ : TCCxt Γ) (x : Name)
+          → Error (Σ Type (λ t → Var Γ t))
+lookupVar {[]}    []       x = throwError $ unboundVariable x
+lookupVar {t ∷ Γ} (x' ∷ γ) x = case x ≟ x' of λ where
+  (yes refl) → ok (t , here)
+  (no _)     → case lookupVar γ x of λ where
+    (ok (t , i)) → ok (t , there i)
+    (fail err)   → fail err
+
+
 -- Checking expressions
 ---------------------------------------------------------------------------
 
 -- During checking of expressions, the context is fixed.
 
 module CheckExpressions {Γ : Cxt} (γ : TCCxt Γ) where
-
-  -- Environment.
-
-  lookupVar : (x : Name) → Error (Σ Type (λ t → Var Γ t))
-  lookupVar x =
-    case ?↦ x ∈ γ of λ where
-      (yes (t , x' , _)) → return (t , x')
-      (no ¬p)            → throwError $ unboundVariable x
 
   -- The expression checker.
 
@@ -73,7 +78,7 @@ module CheckExpressions {Γ : Cxt} (γ : TCCxt Γ) where
     inferExp (A.eBool b) = return (bool , eBool b)
 
     inferExp (A.eId x) = do
-      (t , x') ← lookupVar (idToName x)
+      (t , x') ← lookupVar γ (idToName x)
       return (t , eVar x')
 
     inferExp (A.ePlus  e₁ e₂) = inferOp plus  e₁ e₂
@@ -107,7 +112,7 @@ module CheckExpressions {Γ : Cxt} (γ : TCCxt Γ) where
     checkStm : (s : A.Stm) → Error (Stm Γ)
 
     checkStm (A.sAss x e) = do
-      (t , x') ← lookupVar (idToName x)
+      (t , x') ← lookupVar γ (idToName x)
       e' ← checkExp e t
       return (sAss x' e')
 

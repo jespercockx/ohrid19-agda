@@ -16,7 +16,7 @@ module EvalExp {Γ} (ρ : Env Γ) where
   eval : ∀{t} (e : Exp Γ t) → Val t
   eval (eInt  i)        = i
   eval (eBool b)        = b
-  eval (eVar x)         = All.lookup ρ x
+  eval (eVar x)         = lookupEnv ρ x
   eval (eOp plus e₁ e₂) = eval e₁ + eval e₂
   eval (eOp gt  e₁ e₂)  = iGt (eval e₁) (eval e₂)
   eval (eOp and e₁ e₂)  = case eval e₁ of λ where

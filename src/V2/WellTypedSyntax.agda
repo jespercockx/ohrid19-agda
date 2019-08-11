@@ -9,8 +9,9 @@ open import V2.AST public using (Type; bool; int; Boolean; true; false; PrintBoo
 
 Cxt = List Type
 
-Var : (Γ : Cxt) (t : Type) → Set
-Var Γ t = t ∈ Γ
+data Var : (Γ : Cxt) (t : Type) → Set where
+  here  : ∀ {Γ t} → Var (t ∷ Γ) t
+  there : ∀ {Γ t t'} → Var Γ t → Var (t' ∷ Γ) t
 
 -- Binary Operators.
 

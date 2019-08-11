@@ -21,6 +21,10 @@ instance
 Env : Cxt → Set
 Env = All Val
 
+lookupEnv : ∀ {Γ t} → Env Γ → Var Γ t → Val t
+lookupEnv (v ∷ ρ) here      = v
+lookupEnv (v ∷ ρ) (there x) = lookupEnv ρ x
+
 -- Semantics of operations.
 
 -- Boolean negation.

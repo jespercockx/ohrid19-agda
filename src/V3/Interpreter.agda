@@ -18,7 +18,7 @@ module EvalExp {Γ} (ρ : Env Γ) where
   eval : ∀{t} (e : Exp Γ t) → Val t
   eval (eInt  i)              = i
   eval (eBool b)              = b
-  eval (eVar x)               = All.lookup ρ x
+  eval (eVar x)               = lookupEnv ρ x
   eval (eOp plus e₁ e₂)       = eval e₁ + eval e₂
   eval (eOp gt  e₁ e₂)        = iGt (eval e₁) (eval e₂)
   eval (eOp and e₁ e₂)        = case eval e₁ of λ where
@@ -35,6 +35,12 @@ execDecl (dInit e) ρ = eval ρ e ∷ ρ
 execDecls : ∀{Γ Γ'} (ds : Decls Γ Γ') (ρ : Env Γ) → Env Γ'
 execDecls []       ρ = ρ
 execDecls (d ∷ ds) ρ = execDecls ds (execDecl d ρ)
+
+-- Assigning a new value to a variable in the environment
+
+updateEnv : ∀ {Γ} {t} → Var Γ t → Val t → Env Γ → Env Γ
+updateEnv here      v (_  ∷ ρ) = v  ∷ ρ
+updateEnv (there x) v (v' ∷ ρ) = v' ∷ updateEnv x v ρ
 
 -- Execution of statements.
 
@@ -88,7 +94,7 @@ module ExecStm {Γ : Cxt} where
 
     execStm (sAss x e) = do
       v ← evalExp e
-      modify $ All.updateWith x (λ _ → v)
+      modify $ updateEnv x v
 
     execStm (sIfElse e ss ss') = do
       b ← evalExp e
