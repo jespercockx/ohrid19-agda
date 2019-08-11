@@ -37,7 +37,7 @@ mutual
 
   -- Type inference.
 
-  inferExp : (e : A.Exp) → Error (∃ λ (t : Type) → Exp t)
+  inferExp : (e : A.Exp) → Error (Σ Type (λ t → Exp t))
   inferExp (A.eInt i)  = return (int  , eInt  i)
   inferExp (A.eBool b) = return (bool , eBool b)
   inferExp (A.ePlus e₁ e₂) = inferOp plus  e₁ e₂
@@ -56,7 +56,7 @@ mutual
 
   -- Operators.
 
-  inferOp : ∀{t t'} (op : Op t t') (e₁ e₂ : A.Exp) → Error (∃ λ t → Exp t)
+  inferOp : ∀{t t'} (op : Op t t') (e₁ e₂ : A.Exp) → Error (Σ Type (λ t → Exp t))
   inferOp {t} {t'} op e₁ e₂ = do
     e₁' ← checkExp e₁ t
     e₂' ← checkExp e₂ t
