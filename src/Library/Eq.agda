@@ -4,7 +4,8 @@ module Library.Eq where
 open import Data.Bool using (Bool)
 open import Data.Char using (Char)
 open import Data.Integer using (ℤ)
-open import Data.List.Base using (List; []; _∷_)
+open import Data.List using (List; []; _∷_)
+import      Data.List.Properties
 open import Data.String using (String)
 
 open import Data.Product using (_×_; _,_)
@@ -47,11 +48,4 @@ instance
 
 instance
   eqList : ∀ {ℓ} {A : Set ℓ} {{_ : Eq A}} → Eq (List A)
-  _≟_ {{eqList}} = λ where
-    []       []       → yes refl
-    []       (y ∷ ys) → no λ ()
-    (x ∷ xs) []       → no λ ()
-    (x ∷ xs) (y ∷ ys) → case (x ≟ y , xs ≟ ys) of λ where
-      (yes p , yes q) → yes (cong₂ _∷_ p q)
-      (yes _ , no ¬q) → no (λ { refl → ¬q refl })
-      (no ¬p , _    ) → no (λ { refl → ¬p refl })
+  _≟_ {{eqList {{eqA}}}} = Data.List.Properties.≡-dec (_≟_ {{eqA}})
