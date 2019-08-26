@@ -1,2 +1,2 @@
 include: .
-depend: standard-library
+depend: standard-library ohrid19
