@@ -55,3 +55,24 @@ open IMonad {{...}} public
 
 Monad : ∀ {a b} (M : Set a → Set b) → Set (lsuc a ⊔ b)
 Monad M = IMonad {I = ⊤} (λ _ _ → M)
+
+-- Maybe instances
+
+open import Data.Maybe using (Maybe; nothing; just)
+
+instance
+  functorMaybe : ∀ {a} → Functor (Maybe {a})
+  functorMaybe .fmap f = λ where
+    (just x) → just (f x)
+    nothing  → nothing
+
+  applicativeMaybe : ∀ {a} → Applicative (Maybe {a})
+  applicativeMaybe .pure  = just
+  applicativeMaybe ._<*>_ = λ where
+    (just f) x → fmap f x
+    nothing  x → nothing
+
+  monadMaybe : ∀ {a} → Monad (Maybe {a})
+  monadMaybe ._>>=_ = λ where
+    (just x) f → f x
+    nothing  f → nothing
