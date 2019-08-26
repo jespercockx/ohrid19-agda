@@ -17,21 +17,19 @@ import V3.UntypedInterpreter
 -- Parse.
 
 parse : String → IO A.Program
-parse contents = do
-  case Parser.parse contents of λ where
+parse contents = case Parser.parse contents of λ where
     (bad cs) → do
       putStrLn "SYNTAX ERROR"
       putStrLn (String.fromList cs)
       exitFailure
     (ok prg) → return prg
   where
-  open Parser using (Err; ok; bad)
+    open Parser using (Err; ok; bad)
 
 -- Type check.
 
 check : A.Program → IO Program
-check prg = do
-  case checkProgram prg of λ where
+check prg = case checkProgram prg of λ where
     (fail err) → do
       putStrLn "TYPE ERROR"
       putStr   (print prg)
@@ -40,7 +38,7 @@ check prg = do
       exitFailure
     (ok prg') → return prg'
   where
-  open ErrorMonad using (fail; ok)
+    open ErrorMonad using (fail; ok)
 
 -- Interpret.
 
@@ -58,11 +56,11 @@ usage = do
 
 runwhile : IO ⊤
 runwhile = do
-  file ∷ [] ← getArgs where _ → usage
+  file ∷ [] ← getArgs
+    where _ → usage
   run =<< check =<< parse =<< readFiniteFile file
   return _
 
 main = runwhile
-
 
 -- -}
