@@ -5,7 +5,7 @@ agda=agda --html-highlight=auto
 
 patchTheme=patchTheme.css
 
-default: slides1.html slides2.html slides3.html
+default: slides1.html slides2.html slides3.html slides4.html
 
 REVEALJS_URL=https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.7.0/
 

@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="author" content="Jesper Cockx">
+  <meta name="dcterms.date" content="2019-09-03">
+  <title>Correct-by-construction programming in Agda</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.7.0//css/reveal.css">
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.7.0//css/theme/black.css" id="theme">
+  <link rel="stylesheet" href="white.css"/>
+  <link rel="stylesheet" href="Agda.css"/>
+  <link rel="stylesheet" href="patchTheme.css"/>
+  <!-- Printing and PDF exports -->
+  <script>
+    var link = document.createElement( 'link' );
+    link.rel = 'stylesheet';
+    link.type = 'text/css';
+    link.href = window.location.search.match( /print-pdf/gi ) ? 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.7.0//css/print/pdf.css' : 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.7.0//css/print/paper.css';
+    document.getElementsByTagName( 'head' )[0].appendChild( link );
+  </script>
+  <!--[if lt IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.7.0//lib/js/html5shiv.js"></script>
+  <![endif]-->
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide">
+  <h1 class="title">Correct-by-construction programming in Agda</h1>
+  <p class="subtitle">Lecture 4: (Non-)termination</p>
+  <p class="author">Jesper Cockx</p>
+  <p class="date">3 September 2019</p>
+</section>
+
+<section id="section" class="slide level2">
+<h2></h2>
+<p>&quot;I’ll save the world…</p>
+<p>tomorrow.&quot;</p>
+<p>– unknown</p>
+</section>
+<section><section id="totality-checking" class="title-slide slide level1"><h1>Totality checking</h1></section><section id="partial-functions-in-type-theory" class="slide level2">
+<h2>Partial functions in type theory</h2>
+<!--
+<pre class="Agda"><a id="352" class="Keyword">open</a> <a id="357" class="Keyword">import</a> <a id="364" href="Library.html" class="Module">Library</a>
+</pre>-->
+<p>What happens if we have a partial function in Agda?</p>
+<ul>
+<li>Theory would become inconsistent!</li>
+</ul>
+<pre class="unchecked"><code>absurd : ⊥
+absurd = absurd</code></pre>
+<ul>
+<li>Typechecker would crash or loop!</li>
+</ul>
+<pre class="unchecked"><code>f : ℕ → ℕ
+f zero = 42
+
+test : Vec ℕ (f 1)
+test = []</code></pre>
+<p>⇒ Partial functions must be ruled out!</p>
+</section><section id="checking-totality" class="slide level2">
+<h2>Checking totality</h2>
+<ol type="1">
+<li><strong>Completeness</strong> of pattern matching</li>
+<li><strong>Structural recursion</strong> of recursive functions</li>
+<li><strong>Strict positivity</strong> of inductive datatypes</li>
+<li><strong>Consistency</strong> of universe levels</li>
+</ol>
+<p>2-4 together ensure normalization of well-typed terms</p>
+</section><section id="primitive-recursion" class="slide level2">
+<h2>Primitive recursion</h2>
+<pre class="Agda"><a id="plus"></a><a id="942" href="slides4.html#942" class="Function">plus</a> <a id="947" class="Symbol">:</a> <a id="949" href="Agda.Builtin.Nat.html#165" class="Datatype">ℕ</a> <a id="951" class="Symbol">→</a> <a id="953" href="Agda.Builtin.Nat.html#165" class="Datatype">ℕ</a> <a id="955" class="Symbol">→</a> <a id="957" href="Agda.Builtin.Nat.html#165" class="Datatype">ℕ</a>
+<a id="959" href="slides4.html#942" class="Function">plus</a> <a id="964" href="Agda.Builtin.Nat.html#183" class="InductiveConstructor">zero</a>    <a id="972" href="slides4.html#972" class="Bound">m</a> <a id="974" class="Symbol">=</a> <a id="976" href="slides4.html#972" class="Bound">m</a>
+<a id="978" href="slides4.html#942" class="Function">plus</a> <a id="983" class="Symbol">(</a><a id="984" href="Agda.Builtin.Nat.html#196" class="InductiveConstructor">suc</a> <a id="988" href="slides4.html#988" class="Bound">n</a><a id="989" class="Symbol">)</a> <a id="991" href="slides4.html#991" class="Bound">m</a> <a id="993" class="Symbol">=</a> <a id="995" href="Agda.Builtin.Nat.html#196" class="InductiveConstructor">suc</a> <a id="999" class="Symbol">(</a><a id="1000" href="slides4.html#942" class="Function">plus</a> <a id="1005" href="slides4.html#988" class="Bound">n</a> <a id="1007" href="slides4.html#991" class="Bound">m</a><a id="1008" class="Symbol">)</a>
+
+<a id="natEq"></a><a id="1011" href="slides4.html#1011" class="Function">natEq</a> <a id="1017" class="Symbol">:</a> <a id="1019" href="Agda.Builtin.Nat.html#165" class="Datatype">ℕ</a> <a id="1021" class="Symbol">→</a> <a id="1023" href="Agda.Builtin.Nat.html#165" class="Datatype">ℕ</a> <a id="1025" class="Symbol">→</a> <a id="1027" href="Agda.Builtin.Bool.html#135" class="Datatype">Bool</a>
+<a id="1032" href="slides4.html#1011" class="Function">natEq</a> <a id="1038" href="Agda.Builtin.Nat.html#183" class="InductiveConstructor">zero</a>    <a id="1046" href="Agda.Builtin.Nat.html#183" class="InductiveConstructor">zero</a>    <a id="1054" class="Symbol">=</a> <a id="1056" href="Agda.Builtin.Bool.html#160" class="InductiveConstructor">true</a>
+<a id="1061" href="slides4.html#1011" class="Function">natEq</a> <a id="1067" href="Agda.Builtin.Nat.html#183" class="InductiveConstructor">zero</a>    <a id="1075" class="Symbol">(</a><a id="1076" href="Agda.Builtin.Nat.html#196" class="InductiveConstructor">suc</a> <a id="1080" href="slides4.html#1080" class="Bound">m</a><a id="1081" class="Symbol">)</a> <a id="1083" class="Symbol">=</a> <a id="1085" href="Agda.Builtin.Bool.html#154" class="InductiveConstructor">false</a>
+<a id="1091" href="slides4.html#1011" class="Function">natEq</a> <a id="1097" class="Symbol">(</a><a id="1098" href="Agda.Builtin.Nat.html#196" class="InductiveConstructor">suc</a> <a id="1102" href="slides4.html#1102" class="Bound">n</a><a id="1103" class="Symbol">)</a> <a id="1105" href="Agda.Builtin.Nat.html#183" class="InductiveConstructor">zero</a>    <a id="1113" class="Symbol">=</a> <a id="1115" href="Agda.Builtin.Bool.html#154" class="InductiveConstructor">false</a>
+<a id="1121" href="slides4.html#1011" class="Function">natEq</a> <a id="1127" class="Symbol">(</a><a id="1128" href="Agda.Builtin.Nat.html#196" class="InductiveConstructor">suc</a> <a id="1132" href="slides4.html#1132" class="Bound">n</a><a id="1133" class="Symbol">)</a> <a id="1135" class="Symbol">(</a><a id="1136" href="Agda.Builtin.Nat.html#196" class="InductiveConstructor">suc</a> <a id="1140" href="slides4.html#1140" class="Bound">m</a><a id="1141" class="Symbol">)</a> <a id="1143" class="Symbol">=</a> <a id="1145" href="slides4.html#1011" class="Function">natEq</a> <a id="1151" href="slides4.html#1132" class="Bound">n</a> <a id="1153" href="slides4.html#1140" class="Bound">m</a>
+</pre>
+</section><section id="structural-recursion" class="slide level2">
+<h2>Structural recursion</h2>
+<pre class="Agda"><a id="fib"></a><a id="1189" href="slides4.html#1189" class="Function">fib</a> <a id="1193" class="Symbol">:</a> <a id="1195" href="Agda.Builtin.Nat.html#165" class="Datatype">ℕ</a> <a id="1197" class="Symbol">→</a> <a id="1199" href="Agda.Builtin.Nat.html#165" class="Datatype">ℕ</a>
+<a id="1201" href="slides4.html#1189" class="Function">fib</a> <a id="1205" href="Agda.Builtin.Nat.html#183" class="InductiveConstructor">zero</a>          <a id="1219" class="Symbol">=</a> <a id="1221" href="Agda.Builtin.Nat.html#183" class="InductiveConstructor">zero</a>
+<a id="1226" href="slides4.html#1189" class="Function">fib</a> <a id="1230" class="Symbol">(</a><a id="1231" href="Agda.Builtin.Nat.html#196" class="InductiveConstructor">suc</a> <a id="1235" href="Agda.Builtin.Nat.html#183" class="InductiveConstructor">zero</a><a id="1239" class="Symbol">)</a>    <a id="1244" class="Symbol">=</a> <a id="1246" href="Agda.Builtin.Nat.html#196" class="InductiveConstructor">suc</a> <a id="1250" href="Agda.Builtin.Nat.html#183" class="InductiveConstructor">zero</a>
+<a id="1255" href="slides4.html#1189" class="Function">fib</a> <a id="1259" class="Symbol">(</a><a id="1260" href="Agda.Builtin.Nat.html#196" class="InductiveConstructor">suc</a> <a id="1264" class="Symbol">(</a><a id="1265" href="Agda.Builtin.Nat.html#196" class="InductiveConstructor">suc</a> <a id="1269" href="slides4.html#1269" class="Bound">n</a><a id="1270" class="Symbol">))</a> <a id="1273" class="Symbol">=</a> <a id="1275" href="slides4.html#942" class="Function">plus</a> <a id="1280" class="Symbol">(</a><a id="1281" href="slides4.html#1189" class="Function">fib</a> <a id="1285" href="slides4.html#1269" class="Bound">n</a><a id="1286" class="Symbol">)</a> <a id="1288" class="Symbol">(</a><a id="1289" href="slides4.html#1189" class="Function">fib</a> <a id="1293" class="Symbol">(</a><a id="1294" href="Agda.Builtin.Nat.html#196" class="InductiveConstructor">suc</a> <a id="1298" href="slides4.html#1269" class="Bound">n</a><a id="1299" class="Symbol">))</a>
+</pre>
+<pre class="Agda"><a id="ack"></a><a id="1311" href="slides4.html#1311" class="Function">ack</a> <a id="1315" class="Symbol">:</a> <a id="1317" href="Agda.Builtin.Nat.html#165" class="Datatype">ℕ</a> <a id="1319" class="Symbol">→</a> <a id="1321" href="Agda.Builtin.Nat.html#165" class="Datatype">ℕ</a> <a id="1323" class="Symbol">→</a> <a id="1325" href="Agda.Builtin.Nat.html#165" class="Datatype">ℕ</a>
+<a id="1327" href="slides4.html#1311" class="Function">ack</a> <a id="1331" href="Agda.Builtin.Nat.html#183" class="InductiveConstructor">zero</a>    <a id="1339" href="slides4.html#1339" class="Bound">m</a>       <a id="1347" class="Symbol">=</a> <a id="1349" href="Agda.Builtin.Nat.html#196" class="InductiveConstructor">suc</a> <a id="1353" href="slides4.html#1339" class="Bound">m</a>
+<a id="1355" href="slides4.html#1311" class="Function">ack</a> <a id="1359" class="Symbol">(</a><a id="1360" href="Agda.Builtin.Nat.html#196" class="InductiveConstructor">suc</a> <a id="1364" href="slides4.html#1364" class="Bound">n</a><a id="1365" class="Symbol">)</a> <a id="1367" href="Agda.Builtin.Nat.html#183" class="InductiveConstructor">zero</a>    <a id="1375" class="Symbol">=</a> <a id="1377" href="slides4.html#1311" class="Function">ack</a> <a id="1381" href="slides4.html#1364" class="Bound">n</a> <a id="1383" class="Symbol">(</a><a id="1384" href="Agda.Builtin.Nat.html#196" class="InductiveConstructor">suc</a> <a id="1388" href="Agda.Builtin.Nat.html#183" class="InductiveConstructor">zero</a><a id="1392" class="Symbol">)</a>
+<a id="1394" href="slides4.html#1311" class="Function">ack</a> <a id="1398" class="Symbol">(</a><a id="1399" href="Agda.Builtin.Nat.html#196" class="InductiveConstructor">suc</a> <a id="1403" href="slides4.html#1403" class="Bound">n</a><a id="1404" class="Symbol">)</a> <a id="1406" class="Symbol">(</a><a id="1407" href="Agda.Builtin.Nat.html#196" class="InductiveConstructor">suc</a> <a id="1411" href="slides4.html#1411" class="Bound">m</a><a id="1412" class="Symbol">)</a> <a id="1414" class="Symbol">=</a> <a id="1416" href="slides4.html#1311" class="Function">ack</a> <a id="1420" href="slides4.html#1403" class="Bound">n</a> <a id="1422" class="Symbol">(</a><a id="1423" href="slides4.html#1311" class="Function">ack</a> <a id="1427" class="Symbol">(</a><a id="1428" href="Agda.Builtin.Nat.html#196" class="InductiveConstructor">suc</a> <a id="1432" href="slides4.html#1403" class="Bound">n</a><a id="1433" class="Symbol">)</a> <a id="1435" href="slides4.html#1411" class="Bound">m</a><a id="1436" class="Symbol">)</a>
+</pre>
+</section></section>
+<section><section id="coinduction" class="title-slide slide level1"><h1>Coinduction</h1></section><section id="a-frequently-asked-question" class="slide level2">
+<h2>A frequently asked question</h2>
+<p>“If all functions in Agda are total, doesn’t that mean Agda is not Turing-complete?”</p>
+<div class="fragment">
+<p><em>Answer</em>: <strong>NO!</strong> Agda just forces you to be <em>honest</em> about when a function is non-terminating.</p>
+</div>
+</section><section id="coinduction-in-agda" class="slide level2">
+<h2>Coinduction in Agda</h2>
+<p>A <strong>coinductive type</strong> = a type with possibly infinitely deep values.</p>
+<!--
+<pre class="Agda"><a id="1788" class="Keyword">module</a> <a id="Coinduction"></a><a id="1795" href="slides4.html#1795" class="Module">Coinduction</a> <a id="1807" class="Keyword">where</a>
+  <a id="1815" class="Keyword">module</a> <a id="GuardedStream"></a><a id="1822" href="slides4.html#1822" class="Module">GuardedStream</a> <a id="1836" class="Keyword">where</a>
+</pre>-->
+<pre class="Agda">    <a id="1863" class="Keyword">record</a> <a id="Coinduction.GuardedStream.Stream"></a><a id="1870" href="slides4.html#1870" class="Record">Stream</a> <a id="1877" class="Symbol">(</a><a id="1878" href="slides4.html#1878" class="Bound">A</a> <a id="1880" class="Symbol">:</a> <a id="1882" class="PrimitiveType">Set</a><a id="1885" class="Symbol">)</a> <a id="1887" class="Symbol">:</a> <a id="1889" class="PrimitiveType">Set</a> <a id="1893" class="Keyword">where</a>
+      <a id="1905" class="Keyword">coinductive</a>
+      <a id="1923" class="Keyword">field</a>
+        <a id="Coinduction.GuardedStream.Stream.head"></a><a id="1937" href="slides4.html#1937" class="Field">head</a> <a id="1942" class="Symbol">:</a> <a id="1944" href="slides4.html#1878" class="Bound">A</a>
+        <a id="Coinduction.GuardedStream.Stream.tail"></a><a id="1954" href="slides4.html#1954" class="Field">tail</a> <a id="1959" class="Symbol">:</a> <a id="1961" href="slides4.html#1870" class="Record">Stream</a> <a id="1968" href="slides4.html#1878" class="Bound">A</a>
+    <a id="1974" class="Keyword">open</a> <a id="1979" href="slides4.html#1870" class="Module">Stream</a>
+
+    <a id="Coinduction.GuardedStream.repeat"></a><a id="1991" href="slides4.html#1991" class="Function">repeat</a> <a id="1998" class="Symbol">:</a> <a id="2000" class="Symbol">{</a><a id="2001" href="slides4.html#2001" class="Bound">A</a> <a id="2003" class="Symbol">:</a> <a id="2005" class="PrimitiveType">Set</a><a id="2008" class="Symbol">}</a> <a id="2010" class="Symbol">→</a> <a id="2012" href="slides4.html#2001" class="Bound">A</a> <a id="2014" class="Symbol">→</a> <a id="2016" href="slides4.html#1870" class="Record">Stream</a> <a id="2023" href="slides4.html#2001" class="Bound">A</a>
+    <a id="2029" href="slides4.html#1991" class="Function">repeat</a> <a id="2036" href="slides4.html#2036" class="Bound">x</a> <a id="2038" class="Symbol">.</a><a id="2039" href="slides4.html#1937" class="Field">head</a> <a id="2044" class="Symbol">=</a> <a id="2046" href="slides4.html#2036" class="Bound">x</a>
+    <a id="2052" href="slides4.html#1991" class="Function">repeat</a> <a id="2059" href="slides4.html#2059" class="Bound">x</a> <a id="2061" class="Symbol">.</a><a id="2062" href="slides4.html#1954" class="Field">tail</a> <a id="2067" class="Symbol">=</a> <a id="2069" href="slides4.html#1991" class="Function">repeat</a> <a id="2076" href="slides4.html#2059" class="Bound">x</a>
+</pre>
+</section><section id="mixing-induction-and-coinduction-12" class="slide level2">
+<h2>Mixing induction and coinduction (1/2)</h2>
+<pre class="Agda">  <a id="2134" class="Keyword">mutual</a>
+    <a id="2145" class="Keyword">record</a> <a id="Coinduction.Coℕ′"></a><a id="2152" href="slides4.html#2152" class="Record">Coℕ′</a> <a id="2157" class="Symbol">:</a> <a id="2159" class="PrimitiveType">Set</a> <a id="2163" class="Keyword">where</a>
+      <a id="2175" class="Keyword">coinductive</a>
+      <a id="2193" class="Keyword">field</a>
+        <a id="2207" class="Symbol">.</a><a id="Coinduction.Coℕ′.force"></a><a id="2208" href="slides4.html#2208" class="Field">force</a> <a id="2214" class="Symbol">:</a> <a id="2216" href="slides4.html#2230" class="Datatype">Coℕ</a>
+
+    <a id="2225" class="Keyword">data</a> <a id="Coinduction.Coℕ"></a><a id="2230" href="slides4.html#2230" class="Datatype">Coℕ</a> <a id="2234" class="Symbol">:</a> <a id="2236" class="PrimitiveType">Set</a> <a id="2240" class="Keyword">where</a>
+      <a id="Coinduction.Coℕ.zero"></a><a id="2252" href="slides4.html#2252" class="InductiveConstructor">zero</a> <a id="2257" class="Symbol">:</a> <a id="2259" href="slides4.html#2230" class="Datatype">Coℕ</a>
+      <a id="Coinduction.Coℕ.suc"></a><a id="2269" href="slides4.html#2269" class="InductiveConstructor">suc</a>  <a id="2274" class="Symbol">:</a> <a id="2276" href="slides4.html#2152" class="Record">Coℕ′</a> <a id="2281" class="Symbol">→</a> <a id="2283" href="slides4.html#2230" class="Datatype">Coℕ</a>
+  <a id="2289" class="Keyword">open</a> <a id="2294" href="slides4.html#2152" class="Module">Coℕ′</a> <a id="2299" class="Keyword">public</a>
+</pre>
+</section><section id="mixing-induction-and-coinduction-22" class="slide level2">
+<h2>Mixing induction and coinduction (2/2)</h2>
+<pre class="Agda">  <a id="Coinduction.fromℕ"></a><a id="2360" href="slides4.html#2360" class="Function">fromℕ</a> <a id="2366" class="Symbol">:</a> <a id="2368" href="Agda.Builtin.Nat.html#165" class="Datatype">ℕ</a> <a id="2370" class="Symbol">→</a> <a id="2372" href="slides4.html#2230" class="Datatype">Coℕ</a>
+  <a id="Coinduction.fromℕ′"></a><a id="2378" href="slides4.html#2378" class="Function">fromℕ′</a> <a id="2385" class="Symbol">:</a> <a id="2387" href="Agda.Builtin.Nat.html#165" class="Datatype">ℕ</a> <a id="2389" class="Symbol">→</a> <a id="2391" href="slides4.html#2152" class="Record">Coℕ′</a>
+
+  <a id="2399" href="slides4.html#2360" class="Function">fromℕ</a> <a id="2405" href="Agda.Builtin.Nat.html#183" class="InductiveConstructor">zero</a> <a id="2410" class="Symbol">=</a> <a id="2412" href="slides4.html#2252" class="InductiveConstructor">zero</a>
+  <a id="2419" href="slides4.html#2360" class="Function">fromℕ</a> <a id="2425" class="Symbol">(</a><a id="2426" href="Agda.Builtin.Nat.html#196" class="InductiveConstructor">suc</a> <a id="2430" href="slides4.html#2430" class="Bound">x</a><a id="2431" class="Symbol">)</a> <a id="2433" class="Symbol">=</a> <a id="2435" href="slides4.html#2269" class="InductiveConstructor">suc</a> <a id="2439" class="Symbol">(</a><a id="2440" href="slides4.html#2378" class="Function">fromℕ′</a> <a id="2447" href="slides4.html#2430" class="Bound">x</a><a id="2448" class="Symbol">)</a>
+
+  <a id="2453" href="slides4.html#2378" class="Function">fromℕ′</a> <a id="2460" href="slides4.html#2460" class="Bound">x</a> <a id="2462" class="Symbol">.</a><a id="2463" href="slides4.html#2208" class="Field">force</a> <a id="2469" class="Symbol">=</a> <a id="2471" href="slides4.html#2360" class="Function">fromℕ</a> <a id="2477" href="slides4.html#2460" class="Bound">x</a>
+
+  <a id="Coinduction.infty"></a><a id="2482" href="slides4.html#2482" class="Function">infty</a>  <a id="2489" class="Symbol">:</a> <a id="2491" href="slides4.html#2230" class="Datatype">Coℕ</a>
+  <a id="Coinduction.infty′"></a><a id="2497" href="slides4.html#2497" class="Function">infty′</a> <a id="2504" class="Symbol">:</a> <a id="2506" href="slides4.html#2152" class="Record">Coℕ′</a>
+
+  <a id="2514" href="slides4.html#2482" class="Function">infty</a> <a id="2520" class="Symbol">=</a> <a id="2522" href="slides4.html#2269" class="InductiveConstructor">suc</a> <a id="2526" href="slides4.html#2497" class="Function">infty′</a>
+  <a id="2535" href="slides4.html#2497" class="Function">infty′</a> <a id="2542" class="Symbol">.</a><a id="2543" href="slides4.html#2208" class="Field">force</a> <a id="2549" class="Symbol">=</a> <a id="2551" href="slides4.html#2482" class="Function">infty</a>
+</pre>
+</section><section id="dealing-with-infinite-computations" class="slide level2">
+<h2>Dealing with infinite computations</h2>
+<p>Remember: all Agda functions must be <strong>total</strong></p>
+<p>One way to work around this is by adding ‘fuel’:</p>
+<!--
+<pre class="Agda">  <a id="2710" class="Keyword">postulate</a>
+    <a id="Coinduction.⋯"></a><a id="2724" href="slides4.html#2724" class="Postulate">⋯</a> <a id="2726" class="Symbol">:</a> <a id="2728" class="Symbol">{</a><a id="2729" href="slides4.html#2729" class="Bound">A</a> <a id="2731" class="Symbol">:</a> <a id="2733" class="PrimitiveType">Set</a><a id="2736" class="Symbol">}</a> <a id="2738" class="Symbol">→</a> <a id="2740" href="slides4.html#2729" class="Bound">A</a>
+    <a id="Coinduction.Term"></a><a id="2746" href="slides4.html#2746" class="Postulate">Term</a> <a id="Coinduction.Val"></a><a id="2751" href="slides4.html#2751" class="Postulate">Val</a> <a id="2755" class="Symbol">:</a> <a id="2757" class="PrimitiveType">Set</a>
+</pre>-->
+<pre class="Agda">  <a id="Coinduction.step"></a><a id="2776" href="slides4.html#2776" class="Function">step</a> <a id="2781" class="Symbol">:</a> <a id="2783" href="slides4.html#2746" class="Postulate">Term</a> <a id="2788" class="Symbol">→</a> <a id="2790" href="slides4.html#2746" class="Postulate">Term</a> <a id="2795" href="Data.Sum.Base.html#612" class="Datatype Operator">⊎</a> <a id="2797" href="slides4.html#2751" class="Postulate">Val</a>
+  <a id="2803" href="slides4.html#2776" class="Function">step</a> <a id="2808" class="Symbol">=</a> <a id="2810" href="slides4.html#2724" class="Postulate">⋯</a>
+
+  <a id="Coinduction.eval"></a><a id="2815" href="slides4.html#2815" class="Function">eval</a> <a id="2820" class="Symbol">:</a> <a id="2822" href="Agda.Builtin.Nat.html#165" class="Datatype">ℕ</a> <a id="2824" class="Symbol">→</a> <a id="2826" href="slides4.html#2746" class="Postulate">Term</a> <a id="2831" class="Symbol">→</a> <a id="2833" href="Data.Maybe.Base.html#795" class="Datatype">Maybe</a> <a id="2839" href="slides4.html#2751" class="Postulate">Val</a>
+  <a id="2845" href="slides4.html#2815" class="Function">eval</a> <a id="2850" class="Symbol">(</a><a id="2851" href="Agda.Builtin.Nat.html#196" class="InductiveConstructor">suc</a> <a id="2855" href="slides4.html#2855" class="Bound">n</a><a id="2856" class="Symbol">)</a> <a id="2858" href="slides4.html#2858" class="Bound">t</a> <a id="2860" class="Symbol">=</a> <a id="2862" href="Function.html#3662" class="Function Operator">case</a> <a id="2867" class="Symbol">(</a><a id="2868" href="slides4.html#2776" class="Function">step</a> <a id="2873" href="slides4.html#2858" class="Bound">t</a><a id="2874" class="Symbol">)</a> <a id="2876" href="Function.html#3662" class="Function Operator">of</a> <a id="2879" class="Symbol">λ</a> <a id="2881" class="Keyword">where</a>
+    <a id="2891" class="Symbol">(</a><a id="2892" href="Data.Sum.Base.html#662" class="InductiveConstructor">inj₁</a> <a id="2897" href="slides4.html#2897" class="Bound">t&#39;</a><a id="2899" class="Symbol">)</a> <a id="2901" class="Symbol">→</a> <a id="2903" href="slides4.html#2815" class="Function">eval</a> <a id="2908" href="slides4.html#2855" class="Bound">n</a> <a id="2910" href="slides4.html#2858" class="Bound">t</a>
+    <a id="2916" class="Symbol">(</a><a id="2917" href="Data.Sum.Base.html#687" class="InductiveConstructor">inj₂</a> <a id="2922" href="slides4.html#2922" class="Bound">v</a><a id="2923" class="Symbol">)</a>  <a id="2926" class="Symbol">→</a> <a id="2928" href="Data.Maybe.Base.html#829" class="InductiveConstructor">just</a> <a id="2933" href="slides4.html#2922" class="Bound">v</a>
+  <a id="2937" href="slides4.html#2815" class="Function">eval</a> <a id="2942" href="Agda.Builtin.Nat.html#183" class="InductiveConstructor">zero</a> <a id="2947" href="slides4.html#2947" class="Bound">t</a> <a id="2949" class="Symbol">=</a> <a id="2951" href="Data.Maybe.Base.html#859" class="InductiveConstructor">nothing</a>
+</pre>
+<p>Can we do better?</p>
+</section><section id="going-carbon-free-with-the-delay-monad" class="slide level2">
+<h2>Going carbon-free with the <code>Delay</code> monad</h2>
+<p>A value of type <code>Delay A</code> is</p>
+<ul>
+<li>either a value of type <code>A</code> produced <strong>now</strong></li>
+<li>or a computation of type <code>Delay A</code> producing a value <strong>later</strong></li>
+</ul>
+<p>The <code>Delay</code> monad captures the effect of <em>non-termination</em></p>
+</section><section id="the-delay-monad-definition" class="slide level2">
+<h2>The Delay monad: definition</h2>
+<pre class="Agda">  <a id="3273" class="Keyword">mutual</a>
+    <a id="3284" class="Keyword">record</a> <a id="Coinduction.Delay"></a><a id="3291" href="slides4.html#3291" class="Record">Delay</a> <a id="3297" class="Symbol">(</a><a id="3298" href="slides4.html#3298" class="Bound">A</a> <a id="3300" class="Symbol">:</a> <a id="3302" class="PrimitiveType">Set</a><a id="3305" class="Symbol">)</a> <a id="3307" class="Symbol">:</a> <a id="3309" class="PrimitiveType">Set</a> <a id="3313" class="Keyword">where</a>
+      <a id="3325" class="Keyword">coinductive</a>
+      <a id="3343" class="Keyword">field</a> <a id="Coinduction.Delay.force"></a><a id="3349" href="slides4.html#3349" class="Field">force</a> <a id="3355" class="Symbol">:</a> <a id="3357" href="slides4.html#3376" class="Datatype">Delay&#39;</a> <a id="3364" href="slides4.html#3298" class="Bound">A</a>
+
+    <a id="3371" class="Keyword">data</a> <a id="Coinduction.Delay&#39;"></a><a id="3376" href="slides4.html#3376" class="Datatype">Delay&#39;</a> <a id="3383" class="Symbol">(</a><a id="3384" href="slides4.html#3384" class="Bound">A</a> <a id="3386" class="Symbol">:</a> <a id="3388" class="PrimitiveType">Set</a><a id="3391" class="Symbol">)</a> <a id="3393" class="Symbol">:</a> <a id="3395" class="PrimitiveType">Set</a> <a id="3399" class="Keyword">where</a>
+      <a id="Coinduction.Delay&#39;.now"></a><a id="3411" href="slides4.html#3411" class="InductiveConstructor">now</a>   <a id="3417" class="Symbol">:</a> <a id="3419" href="slides4.html#3384" class="Bound">A</a>       <a id="3427" class="Symbol">→</a> <a id="3429" href="slides4.html#3376" class="Datatype">Delay&#39;</a> <a id="3436" href="slides4.html#3384" class="Bound">A</a>
+      <a id="Coinduction.Delay&#39;.later"></a><a id="3444" href="slides4.html#3444" class="InductiveConstructor">later</a> <a id="3450" class="Symbol">:</a> <a id="3452" href="slides4.html#3291" class="Record">Delay</a> <a id="3458" href="slides4.html#3384" class="Bound">A</a> <a id="3460" class="Symbol">→</a> <a id="3462" href="slides4.html#3376" class="Datatype">Delay&#39;</a> <a id="3469" href="slides4.html#3384" class="Bound">A</a>
+
+  <a id="3474" class="Keyword">open</a> <a id="3479" href="slides4.html#3291" class="Module">Delay</a> <a id="3485" class="Keyword">public</a>
+
+  <a id="Coinduction.never"></a><a id="3495" href="slides4.html#3495" class="Function">never</a> <a id="3501" class="Symbol">:</a> <a id="3503" class="Symbol">{</a><a id="3504" href="slides4.html#3504" class="Bound">A</a> <a id="3506" class="Symbol">:</a> <a id="3508" class="PrimitiveType">Set</a><a id="3511" class="Symbol">}</a> <a id="3513" class="Symbol">→</a> <a id="3515" href="slides4.html#3291" class="Record">Delay</a> <a id="3521" href="slides4.html#3504" class="Bound">A</a>
+  <a id="3525" href="slides4.html#3495" class="Function">never</a> <a id="3531" class="Symbol">.</a><a id="3532" href="slides4.html#3349" class="Field">force</a> <a id="3538" class="Symbol">=</a> <a id="3540" href="slides4.html#3444" class="InductiveConstructor">later</a> <a id="3546" href="slides4.html#3495" class="Function">never</a>
+</pre>
+</section><section id="unrolling-a-delayed-value" class="slide level2">
+<h2>Unrolling a <code>Delay</code>ed value</h2>
+<pre class="Agda">  <a id="Coinduction.unroll"></a><a id="3595" href="slides4.html#3595" class="Function">unroll</a> <a id="3602" class="Symbol">:</a> <a id="3604" class="Symbol">{</a><a id="3605" href="slides4.html#3605" class="Bound">A</a> <a id="3607" class="Symbol">:</a> <a id="3609" class="PrimitiveType">Set</a><a id="3612" class="Symbol">}</a> <a id="3614" class="Symbol">→</a> <a id="3616" href="Agda.Builtin.Nat.html#165" class="Datatype">ℕ</a> <a id="3618" class="Symbol">→</a> <a id="3620" href="slides4.html#3291" class="Record">Delay</a> <a id="3626" href="slides4.html#3605" class="Bound">A</a> <a id="3628" class="Symbol">→</a> <a id="3630" href="Data.Maybe.Base.html#795" class="Datatype">Maybe</a> <a id="3636" href="slides4.html#3605" class="Bound">A</a>
+  <a id="3640" href="slides4.html#3595" class="Function">unroll</a> <a id="3647" href="Agda.Builtin.Nat.html#183" class="InductiveConstructor">zero</a>    <a id="3655" href="slides4.html#3655" class="Bound">x</a> <a id="3657" class="Symbol">=</a> <a id="3659" href="Data.Maybe.Base.html#859" class="InductiveConstructor">nothing</a>
+  <a id="3669" href="slides4.html#3595" class="Function">unroll</a> <a id="3676" class="Symbol">(</a><a id="3677" href="Agda.Builtin.Nat.html#196" class="InductiveConstructor">suc</a> <a id="3681" href="slides4.html#3681" class="Bound">n</a><a id="3682" class="Symbol">)</a> <a id="3684" href="slides4.html#3684" class="Bound">x</a> <a id="3686" class="Symbol">=</a> <a id="3688" href="Function.html#3662" class="Function Operator">case</a> <a id="3693" class="Symbol">(</a><a id="3694" href="slides4.html#3684" class="Bound">x</a> <a id="3696" class="Symbol">.</a><a id="3697" href="slides4.html#3349" class="Field">force</a><a id="3702" class="Symbol">)</a> <a id="3704" href="Function.html#3662" class="Function Operator">of</a> <a id="3707" class="Symbol">λ</a> <a id="3709" class="Keyword">where</a>
+    <a id="3719" class="Symbol">(</a><a id="3720" href="slides4.html#3411" class="InductiveConstructor">now</a> <a id="3724" href="slides4.html#3724" class="Bound">v</a>  <a id="3727" class="Symbol">)</a> <a id="3729" class="Symbol">→</a> <a id="3731" href="Data.Maybe.Base.html#829" class="InductiveConstructor">just</a> <a id="3736" href="slides4.html#3724" class="Bound">v</a>
+    <a id="3742" class="Symbol">(</a><a id="3743" href="slides4.html#3444" class="InductiveConstructor">later</a> <a id="3749" href="slides4.html#3749" class="Bound">d</a><a id="3750" class="Symbol">)</a> <a id="3752" class="Symbol">→</a> <a id="3754" href="slides4.html#3595" class="Function">unroll</a> <a id="3761" href="slides4.html#3681" class="Bound">n</a> <a id="3763" href="slides4.html#3749" class="Bound">d</a>
+</pre>
+</section></section>
+<section><section id="sized-types" class="title-slide slide level1"><h1>Sized types</h1></section><section id="using-sizes-to-prove-termination" class="slide level2">
+<h2>Using sizes to prove termination</h2>
+<p>Totality requirement: coinductive definitions should be <strong>productive</strong>: computing each observation should be terminating.</p>
+<p>To ensure this, Agda checks that corecursive calls are <strong>guarded by constructors</strong>, but this is often quite limiting.</p>
+<p>A more flexible and modular approach is to use <strong>sized types</strong>.</p>
+</section><section id="the-type-size" class="slide level2">
+<h2>The type <code>Size</code></h2>
+<p><code>Size</code> ≃ abstract version of the natural numbers extended with <code>∞</code></p>
+<p>For each <code>i : Size</code>, we have a type <code>Size&lt; i</code> of sizes <strong>smaller than <code>i</code></strong>.</p>
+<p><strong>Note</strong>: pattern matching on <code>Size</code> is not allowed!</p>
+</section><section id="the-sized-delay-monad" class="slide level2">
+<h2>The sized delay monad</h2>
+<!--
+<pre class="Agda"><a id="4388" class="Keyword">module</a> <a id="SizedTypes"></a><a id="4395" href="slides4.html#4395" class="Module">SizedTypes</a> <a id="4406" class="Keyword">where</a>
+  <a id="4414" class="Keyword">open</a> <a id="4419" class="Keyword">import</a> <a id="4426" href="Size.html" class="Module">Size</a>
+</pre>-->
+<pre class="Agda">  <a id="4450" class="Keyword">mutual</a>
+    <a id="4461" class="Keyword">record</a> <a id="SizedTypes.Delay"></a><a id="4468" href="slides4.html#4468" class="Record">Delay</a> <a id="4474" class="Symbol">(</a><a id="4475" href="slides4.html#4475" class="Bound">i</a> <a id="4477" class="Symbol">:</a> <a id="4479" href="Agda.Builtin.Size.html#179" class="Postulate">Size</a><a id="4483" class="Symbol">)</a> <a id="4485" class="Symbol">(</a><a id="4486" href="slides4.html#4486" class="Bound">A</a> <a id="4488" class="Symbol">:</a> <a id="4490" class="PrimitiveType">Set</a><a id="4493" class="Symbol">)</a> <a id="4495" class="Symbol">:</a> <a id="4497" class="PrimitiveType">Set</a> <a id="4501" class="Keyword">where</a>
+      <a id="4513" class="Keyword">coinductive</a>
+      <a id="4531" class="Keyword">constructor</a> <a id="SizedTypes.Delay.delay"></a><a id="4543" href="slides4.html#4543" class="CoinductiveConstructor">delay</a>
+      <a id="4555" class="Keyword">field</a>
+        <a id="SizedTypes.Delay.force"></a><a id="4569" href="slides4.html#4569" class="Field">force</a> <a id="4575" class="Symbol">:</a> <a id="4577" class="Symbol">{</a><a id="4578" href="slides4.html#4578" class="Bound">j</a> <a id="4580" class="Symbol">:</a> <a id="4582" href="Agda.Builtin.Size.html#211" class="Postulate Operator">Size&lt;</a> <a id="4588" href="slides4.html#4475" class="Bound">i</a><a id="4589" class="Symbol">}</a> <a id="4591" class="Symbol">→</a> <a id="4593" href="slides4.html#4614" class="Datatype">Delay&#39;</a> <a id="4600" href="slides4.html#4578" class="Bound">j</a> <a id="4602" href="slides4.html#4486" class="Bound">A</a>
+
+    <a id="4609" class="Keyword">data</a> <a id="SizedTypes.Delay&#39;"></a><a id="4614" href="slides4.html#4614" class="Datatype">Delay&#39;</a> <a id="4621" class="Symbol">(</a><a id="4622" href="slides4.html#4622" class="Bound">i</a> <a id="4624" class="Symbol">:</a> <a id="4626" href="Agda.Builtin.Size.html#179" class="Postulate">Size</a><a id="4630" class="Symbol">)</a> <a id="4632" class="Symbol">(</a><a id="4633" href="slides4.html#4633" class="Bound">A</a> <a id="4635" class="Symbol">:</a> <a id="4637" class="PrimitiveType">Set</a><a id="4640" class="Symbol">)</a> <a id="4642" class="Symbol">:</a> <a id="4644" class="PrimitiveType">Set</a> <a id="4648" class="Keyword">where</a>
+      <a id="SizedTypes.Delay&#39;.return&#39;"></a><a id="4660" href="slides4.html#4660" class="InductiveConstructor">return&#39;</a> <a id="4668" class="Symbol">:</a> <a id="4670" href="slides4.html#4633" class="Bound">A</a>         <a id="4680" class="Symbol">→</a> <a id="4682" href="slides4.html#4614" class="Datatype">Delay&#39;</a> <a id="4689" href="slides4.html#4622" class="Bound">i</a> <a id="4691" href="slides4.html#4633" class="Bound">A</a>
+      <a id="SizedTypes.Delay&#39;.later&#39;"></a><a id="4699" href="slides4.html#4699" class="InductiveConstructor">later&#39;</a>  <a id="4707" class="Symbol">:</a> <a id="4709" href="slides4.html#4468" class="Record">Delay</a> <a id="4715" href="slides4.html#4622" class="Bound">i</a> <a id="4717" href="slides4.html#4633" class="Bound">A</a> <a id="4719" class="Symbol">→</a> <a id="4721" href="slides4.html#4614" class="Datatype">Delay&#39;</a> <a id="4728" href="slides4.html#4622" class="Bound">i</a> <a id="4730" href="slides4.html#4633" class="Bound">A</a>
+</pre>
+<p><code>i</code> ≃ how many more steps are we allowed to observe.</p>
+<p><code>Delay ∞ A</code> is the type of computations that can take <em>any</em> number of steps.</p>
+</section><section id="interpreting-well-typed-while-programs" class="slide level2">
+<h2>Interpreting well-typed WHILE programs</h2>
+<p>WHILE statements can have two effects:</p>
+<ul>
+<li>Modify the environment ⇒ <code>State</code> monad</li>
+<li>Go into a loop ⇒ <code>Delay</code> monad</li>
+</ul>
+<p>We combine both effects in the <code>Exec</code> monad.</p>
+</section><section id="the-exec-monad" class="slide level2">
+<h2>The <code>Exec</code> monad</h2>
+<!--
+<pre class="Agda">  <a id="5120" class="Keyword">open</a> <a id="5125" class="Keyword">import</a> <a id="5132" href="Library.html" class="Module">Library</a>
+  <a id="5142" class="Keyword">postulate</a>
+    <a id="SizedTypes.⋯"></a><a id="5156" href="slides4.html#5156" class="Postulate">⋯</a> <a id="5158" class="Symbol">:</a> <a id="5160" class="Symbol">{</a><a id="5161" href="slides4.html#5161" class="Bound">A</a> <a id="5163" class="Symbol">:</a> <a id="5165" class="PrimitiveType">Set</a><a id="5168" class="Symbol">}</a> <a id="5170" class="Symbol">→</a> <a id="5172" href="slides4.html#5161" class="Bound">A</a>
+    <a id="SizedTypes.Cxt"></a><a id="5178" href="slides4.html#5178" class="Postulate">Cxt</a> <a id="5182" class="Symbol">:</a> <a id="5184" class="PrimitiveType">Set</a>
+    <a id="SizedTypes.Stm"></a><a id="5192" href="slides4.html#5192" class="Postulate">Stm</a> <a id="5196" class="Symbol">:</a> <a id="5198" href="slides4.html#5178" class="Postulate">Cxt</a> <a id="5202" class="Symbol">→</a> <a id="5204" class="PrimitiveType">Set</a>
+    <a id="SizedTypes.Env"></a><a id="5212" href="slides4.html#5212" class="Postulate">Env</a> <a id="5216" class="Symbol">:</a> <a id="5218" href="slides4.html#5178" class="Postulate">Cxt</a> <a id="5222" class="Symbol">→</a> <a id="5224" class="PrimitiveType">Set</a>
+    <a id="SizedTypes.Program"></a><a id="5232" href="slides4.html#5232" class="Postulate">Program</a> <a id="5240" class="Symbol">:</a> <a id="5242" class="PrimitiveType">Set</a>
+</pre>-->
+<pre class="Agda">  <a id="5265" class="Keyword">record</a> <a id="SizedTypes.Exec"></a><a id="5272" href="slides4.html#5272" class="Record">Exec</a> <a id="5277" class="Symbol">{</a><a id="5278" href="slides4.html#5278" class="Bound">Γ</a> <a id="5280" class="Symbol">:</a> <a id="5282" href="slides4.html#5178" class="Postulate">Cxt</a><a id="5285" class="Symbol">}</a> <a id="5287" class="Symbol">(</a><a id="5288" href="slides4.html#5288" class="Bound">i</a> <a id="5290" class="Symbol">:</a> <a id="5292" href="Agda.Builtin.Size.html#179" class="Postulate">Size</a><a id="5296" class="Symbol">)</a> <a id="5298" class="Symbol">(</a><a id="5299" href="slides4.html#5299" class="Bound">A</a> <a id="5301" class="Symbol">:</a> <a id="5303" class="PrimitiveType">Set</a><a id="5306" class="Symbol">)</a> <a id="5308" class="Symbol">:</a> <a id="5310" class="PrimitiveType">Set</a> <a id="5314" class="Keyword">where</a>
+    <a id="5324" class="Keyword">field</a>
+      <a id="SizedTypes.Exec.runExec"></a><a id="5336" href="slides4.html#5336" class="Field">runExec</a> <a id="5344" class="Symbol">:</a> <a id="5346" class="Symbol">(</a><a id="5347" href="slides4.html#5347" class="Bound">ρ</a> <a id="5349" class="Symbol">:</a> <a id="5351" href="slides4.html#5212" class="Postulate">Env</a> <a id="5355" href="slides4.html#5278" class="Bound">Γ</a><a id="5356" class="Symbol">)</a> <a id="5358" class="Symbol">→</a> <a id="5360" href="slides4.html#4468" class="Record">Delay</a> <a id="5366" href="slides4.html#5288" class="Bound">i</a> <a id="5368" class="Symbol">(</a><a id="5369" href="slides4.html#5299" class="Bound">A</a> <a id="5371" href="Data.Product.html#1162" class="Function Operator">×</a> <a id="5373" href="slides4.html#5212" class="Postulate">Env</a> <a id="5377" href="slides4.html#5278" class="Bound">Γ</a><a id="5378" class="Symbol">)</a>
+  <a id="5382" class="Keyword">open</a> <a id="5387" href="slides4.html#5272" class="Module">Exec</a> <a id="5392" class="Keyword">public</a>
+
+  <a id="SizedTypes.execStm"></a><a id="5402" href="slides4.html#5402" class="Function">execStm</a> <a id="5410" class="Symbol">:</a> <a id="5412" class="Symbol">∀</a> <a id="5414" class="Symbol">{</a><a id="5415" href="slides4.html#5415" class="Bound">Γ</a><a id="5416" class="Symbol">}</a> <a id="5418" class="Symbol">{</a><a id="5419" href="slides4.html#5419" class="Bound">i</a><a id="5420" class="Symbol">}</a> <a id="5422" class="Symbol">(</a><a id="5423" href="slides4.html#5423" class="Bound">s</a> <a id="5425" class="Symbol">:</a> <a id="5427" href="slides4.html#5192" class="Postulate">Stm</a> <a id="5431" href="slides4.html#5415" class="Bound">Γ</a><a id="5432" class="Symbol">)</a> <a id="5434" class="Symbol">→</a> <a id="5436" href="slides4.html#5272" class="Record">Exec</a> <a id="5441" class="Symbol">{</a><a id="5442" href="slides4.html#5415" class="Bound">Γ</a><a id="5443" class="Symbol">}</a> <a id="5445" href="slides4.html#5419" class="Bound">i</a> <a id="5447" href="Agda.Builtin.Unit.html#137" class="Record">⊤</a>
+  <a id="5451" href="slides4.html#5402" class="Function">execStm</a> <a id="5459" class="Symbol">=</a> <a id="5461" href="slides4.html#5156" class="Postulate">⋯</a>
+
+  <a id="SizedTypes.execPrg"></a><a id="5466" href="slides4.html#5466" class="Function">execPrg</a> <a id="5474" class="Symbol">:</a> <a id="5476" class="Symbol">∀</a> <a id="5478" class="Symbol">{</a><a id="5479" href="slides4.html#5479" class="Bound">i</a><a id="5480" class="Symbol">}</a> <a id="5482" class="Symbol">(</a><a id="5483" href="slides4.html#5483" class="Bound">prg</a> <a id="5487" class="Symbol">:</a> <a id="5489" href="slides4.html#5232" class="Postulate">Program</a><a id="5496" class="Symbol">)</a> <a id="5498" class="Symbol">→</a> <a id="5500" href="slides4.html#4468" class="Record">Delay</a> <a id="5506" href="slides4.html#5479" class="Bound">i</a> <a id="5508" href="Agda.Builtin.Int.html#219" class="Datatype">ℤ</a>
+  <a id="5512" href="slides4.html#5466" class="Function">execPrg</a> <a id="5520" href="slides4.html#5520" class="Bound">prg</a> <a id="5524" class="Symbol">=</a> <a id="5526" href="slides4.html#5156" class="Postulate">⋯</a>
+</pre>
+<p>See <a href="https://jespercockx.github.io/ohrid19-agda/src/V3/html/V3.Interpreter.html">V3/Interpreter.agda</a> for full code.</p>
+<p><strong>Exercise</strong>: Extend the interpreter with rules for the new syntactic constructions you added.</p>
+</section></section>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.7.0//lib/js/head.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.7.0//js/reveal.js"></script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        // Push each slide change to the browser history
+        history: true,
+        // Vertical centering of slides
+        center: false,
+        // Transition style
+        transition: 'linear', // none/fade/slide/convex/concave/zoom
+        // The "normal" size of the presentation, aspect ratio will be preserved
+        // when the presentation is scaled to fit different resolutions. Can be
+        // specified using percentage units.
+        width: 1280,
+        height: 720,
+        // Factor of the display size that should remain empty around the content
+        margin: 0.2,
+        math: {
+          mathjax: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js',
+          config: 'TeX-AMS_HTML-full',
+          tex2jax: {
+            inlineMath: [['\\(','\\)']],
+            displayMath: [['\\[','\\]']],
+            balanceBraces: true,
+            processEscapes: false,
+            processRefs: true,
+            processEnvironments: true,
+            preview: 'TeX',
+            skipTags: ['script','noscript','style','textarea','pre','code'],
+            ignoreClass: 'tex2jax_ignore',
+            processClass: 'tex2jax_process'
+          },
+        },
+
+        // Optional reveal.js plugins
+        dependencies: [
+          { src: 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.7.0//lib/js/classList.js', condition: function() { return !document.body.classList; } },
+          { src: 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.7.0//plugin/zoom-js/zoom.js', async: true },
+          { src: 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.7.0//plugin/math/math.js', async: true },
+          { src: 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.7.0//plugin/notes/notes.js', async: true }
+        ]
+      });
+    </script>
+    </body>
+</html>
