@@ -109,8 +109,14 @@ int main () {
 
 * **Lecture 1**: Getting started with Agda
 * **Lecture 2**: Indexed datatypes and dependent pattern matching
-* **Lecture 3**: Practical programming: instance arguments, do notation, Haskell FFI
-* **Lecture 4**: (Non-)termination: termination checker, coinduction, sized types
+* **Lecture 3**: Writing Agda programs that run
+  - instance arguments
+  - do notation
+  - Haskell FFI
+* **Lecture 4**: (Non-)termination
+  - termination checker
+  - coinduction
+  - sized types
 
 # Introduction to Agda
 

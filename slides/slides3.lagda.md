@@ -13,14 +13,6 @@ margin: "0.2"
 ---
 
 
-##
-
-"To be is to do" --Socrates
-
-"To do is to be" --Sartre
-
-"Do be do be do" --Sinatra.
-
 # Type classes
 
 ## What is a type class?
@@ -99,6 +91,14 @@ testPrint = (print true) ++ (print "a string")
 
 # Monads
 
+##
+
+"To be is to do" --Socrates
+
+"To do is to be" --Sartre
+
+"Do be do be do" --Sinatra.
+
 ## Side effects in a pure language
 
 Agda is a **pure** language: functions have no side effects
@@ -125,23 +125,26 @@ See [Library/Error.agda](https://jespercockx.github.io/ohrid19-agda/src/html/Lib
 
 <!--
 ```
-open import Library hiding (All)
+open import Data.Vec using (Vec)
+open import Library hiding (All; IMonad; return; _>>=_)
+module _ where
+  open import Library hiding (All; IMonad)
 ```
 -->
 
 ```
-_ : Maybe ℤ
-_ = (just (-[1+ 3 ])) >>= λ x →
-    (just (+ 5)     ) >>= λ y →
-    return (x + y)
+  _ : Maybe ℤ
+  _ = (just (-[1+ 3 ])) >>= λ x →
+      (just (+ 5)     ) >>= λ y →
+      return (x + y)
 ```
 you can write:
 ```
-_ : Maybe ℤ
-_ = do
-  x ← just (-[1+ 3 ])
-  y ← just (+ 5)
-  return (x + y)
+  _ : Maybe ℤ
+  _ = do
+    x ← just (-[1+ 3 ])
+    y ← just (+ 5)
+    return (x + y)
 ```
 
 ## Pattern matching with `do`
@@ -149,25 +152,23 @@ _ = do
 There can be a *pattern* to the left of a `←`, alternative cases can be handled in a local `where`
 
 ```
-pred : ℕ → Maybe ℕ
-pred n = do
-  suc m ← just n
-    where zero → nothing
-  return m
+  pred : ℕ → Maybe ℕ
+  pred n = do
+    suc m ← just n
+      where zero → nothing
+    return m
 ```
 
 ## Dependent pattern matching with `do`
 
 ```
-open import Data.Vec using (Vec)
+  postulate
+    test : (m n : ℕ) → Maybe (m ≡ n)
 
-postulate
-  test : (m n : ℕ) → Maybe (m ≡ n)
-
-cast : (m n : ℕ) → Vec ℤ m → Maybe (Vec ℤ n)
-cast m n xs = do
-  refl ← test m n
-  return xs
+  cast : (m n : ℕ) → Vec ℤ m → Maybe (Vec ℤ n)
+  cast m n xs = do
+    refl ← test m n
+    return xs
 ```
 Pattern matching allows typechecker to learn new facts!
 
@@ -215,9 +216,95 @@ Possible solutions:
 
 An **indexed monad** = a monad with two extra parameters for the (static) *input* and *output* states
 
-* `return : A → M i i A`
-* `_>>=_  : M i j A → (A → M j k B) → M i k B`
+```
+record IMonad {I : Set} (M : I → I → Set → Set) : Set₁ where
+  field
+    return : ∀ {A i} → A → M i i A
+    _>>=_  : ∀ {A B i j k}
+           → M i j A → (A → M j k B) → M i k B
+```
 
 Examples:
-- `TCDecl` monad (see [V2/TypeChecker.agda](https://jespercockx.github.io/ohrid19-agda/src/html/V2/V2.TypeChecker.html).
-- `Exec` monad (see [V3/Interpreter.agda](https://jespercockx.github.io/ohrid19-agda/src/html/V3/V3.TypeChecker.html).
+
+- `TCDecl` monad (see [V2/TypeChecker.agda](https://jespercockx.github.io/ohrid19-agda/src/html/V2/V2.TypeChecker.html)).
+- `Exec` monad (see [V3/Interpreter.agda](https://jespercockx.github.io/ohrid19-agda/src/html/V3/V3.TypeChecker.html)).
+
+# Haskell FFI
+
+##
+
+"Beware of bugs in the above code; I have only proved it correct, not tried it." -- Donald Knuth
+
+<!--
+```agda
+module _ where
+
+module FFI where
+```
+-->
+
+## Why use an FFI?
+
+## Haskell FFI example:
+
+```haskell
+  -- In file `While/V1/Abs.hs`:
+  data Type = TBool | TInt
+```
+```agda
+  -- In file `AST.agda`:
+  {-# FOREIGN GHC import While.Abs #-}
+  data Type : Set where
+    bool int : Type
+
+  {-# COMPILE GHC Type = data Type
+    ( TBool
+    | TInt
+    ) #-}
+```
+
+## Haskell FFI: basics
+
+Import a Haskell module:
+
+```agda
+  {-# FOREIGN GHC import HaskellModule.hs #-}
+```
+
+Bind Haskell function to Agda name:
+
+<!--
+```
+  postulate AgdaType : Set
+```
+-->
+
+```agda
+  postulate agdaName : AgdaType
+  {-# COMPILE GHC agdaName = haskellCode #-}
+```
+
+Bind Haskell datatype to Agda datatype:
+
+```
+  data D : Set where c₁ c₂ : D
+  {-# COMPILE GHC D = data hsData (hsCon₁ | hsCon₂) #-}
+```
+
+## BNFC: the Backus-Naur Form Compiler
+
+BNFC is a Haskell library for generating Haskell code from a grammar:
+
+- Datatypes for abstract syntax
+- Parser
+- Pretty-printer
+
+See [While.cf](https://jespercockx.github.io/ohrid19-agda/src/V1/While.cf) for the grammar of WHILE.
+
+## Exercise
+
+Extend the BNFC grammar with the new syntactic constructions you added.
+
+Don't forget to update the Haskell bindings in [AST.agda](https://jespercockx.github.io/ohrid19-agda/src/V1/html/V1.AST.html)!
+
+Testing the grammar: `make parser` will compile the parser and run it on [/test/gcd.c](https://jespercockx.github.io/ohrid19-agda/test/gcd.c).
