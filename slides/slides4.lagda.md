@@ -301,4 +301,13 @@ We combine both effects in the `Exec` monad.
 ```
 See [V3/Interpreter.agda](https://jespercockx.github.io/ohrid19-agda/src/V3/html/V3.Interpreter.html) for full code.
 
-**Exercise**: Extend the interpreter with rules for the new syntactic constructions you added.
+## Exercise
+
+Now you should be ready to add a bigger new feature:
+
+* A new control operator: `if` statements, `do/while` loops, `for`, `switch`, ...
+* New types: `char`, `bool`, ...
+* New programming concepts: function calls, pointers, ...
+
+Extend the syntax, the typechecker, and the interpreter with rules for
+your new feature.

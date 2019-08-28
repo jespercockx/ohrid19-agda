@@ -16,9 +16,21 @@ margin: "0.2"
 
 ##
 
-“Program testing can be used to show the presence of bugs, but never to show their absence!” --Edsger Dijkstra
+"Program testing can be used to show the presence of bugs, but never to show their absence!"
 
-“A computer will do what you tell it to do, but that may be much different from what you had in mind.” --Joseph Weizenbaum
+--Edsger Dijkstra
+
+##
+
+"A computer will do what you tell it to do, but that may be much different from what you had in mind."
+
+--Joseph Weizenbaum
+
+##
+
+"That is the very purpose of declarative programming – to make it more likely that we mean what we say by improving our ability to say what we mean."
+
+--Conor McBride
 
 ## Why use dependent types?
 
@@ -40,15 +52,6 @@ The intrinsic approach is also called **correct-by-construction** programming.
 ## Example of extrinsic verification
 <!--
 ```agda
-open import Data.Bool.Base using (Bool; true; false)
-open import Data.Char.Base using (Char)
-open import Data.Integer.Base using (ℤ)
-open import Data.List.Base using (List; []; _∷_)
-open import Data.Maybe.Base using (Maybe; nothing; just)
-open import Data.Nat.Base using (ℕ; zero; suc; _+_; _*_; _<_)
-open import Data.Product using (_×_; _,_)
-open import Agda.Builtin.Equality using (_≡_; refl)
-
 postulate
   ⋯ : ∀ {ℓ} {A : Set ℓ} → A
 
@@ -57,6 +60,15 @@ module Intro where
 -->
 
 ```agda
+  open import Data.Bool.Base using (Bool; true; false)
+  open import Data.Char.Base using (Char)
+  open import Data.Integer.Base using (ℤ)
+  open import Data.List.Base using (List; []; _∷_)
+  open import Data.Maybe.Base using (Maybe; nothing; just)
+  open import Data.Nat.Base using (ℕ; zero; suc; _+_; _*_; _<_)
+  open import Data.Product using (_×_; _,_)
+  open import Agda.Builtin.Equality using (_≡_; refl)
+
   module Extrinsic where
     sort : List ℕ → List ℕ
     sort = ⋯
@@ -86,7 +98,7 @@ Building invariants into the *types* of our program, to make it
 
 . . .
 
-No proving allowed!
+No proving required!
 
 ## Running example
 
@@ -181,7 +193,74 @@ Programs may contain **holes** (? or {! !}).
   * Apply given function to some new holes
 - **C-c C-c**: case split on a variable
 
+## Unicode input
+
+Agda's Emacs mode interprets many latex-like commands as unicode symbols:
+
+- `\lambda` = `λ`
+- `\forall` = `∀`
+- `\r` = `→`, `\l` = `←`
+- `\Gamma` = `Γ`, `\Sigma` = `Σ`, ...
+- `\equiv` = `≡`
+- `\::` = `∷`
+- `\bN` = `ℕ`, `\bZ` = `ℤ`, ...
+
+To get information about specific character, use `M-x describe-char`
+
 # Demo time!
+
+## Data types
+
+<!--
+```
+module datatypes where
+```
+-->
+
+```
+  data Bool : Set where
+    true  : Bool
+    false : Bool
+
+  data ℕ : Set where
+    zero : ℕ
+    suc  : (n : ℕ) → ℕ
+```
+
+<!--
+```
+open import Data.Nat using (ℕ; zero; suc)
+open import Data.Bool using (Bool; true; false)
+```
+-->
+
+## Function definitions
+
+```
+_+_ : ℕ → ℕ → ℕ
+zero  + y = y
+suc x + y = suc (x + y)
+```
+
+**Note:** underscores indicate argument positions for mixfix functions
+
+## Pattern-matching lambda
+
+A *pattern lambda* introduces an anonymous function:
+```
+f : Bool → Bool
+f = λ { true  → false
+      ; false → true
+      }
+```
+Alternative syntax:
+```
+f′ : Bool → Bool
+f′ = λ where
+  true  → false
+  false → true
+```
+
 
 ## Testing functions using the identity type
 
@@ -191,13 +270,42 @@ The identity type `x ≡ y` is inhabited by `refl` iff `x` and `y` are
 We can use this to write *checked* tests for our Agda functions!
 
 ```
+open import Relation.Binary.PropositionalEquality using (_≡_; refl)
+
 testPlus : 1 + 1 ≡ 2
 testPlus = refl
 ```
 
+## Parametrized datatypes
+
+```
+data List (A : Set) : Set where
+  []  : List A
+  _∷_ : A → List A → List A
+
+data Maybe (A : Set) : Set where
+  nothing : Maybe A
+  just    : A → Maybe A
+```
+
+## Parametrized functions
+
+```
+if_then_else_ : {A : Set} → Bool → A → A → A
+if false then x else y = y
+if true  then x else y = x
+```
+
+**Note:** `{A : Set}` indicates an *implicit argument*
+
+# Syntax of WHILE language
+
 ## Abstract syntax tree of WHILE
 
 ```
+open import Data.Char using (Char)
+open import Data.Integer using (ℤ)
+
 data Id : Set where
   mkId : List Char → Id
 
@@ -210,25 +318,23 @@ data Exp : Set where
   eAnd      : (e e' : Exp)  → Exp
 ```
 
-## Consistency checks
-
-To maintain logical consistency, Agda does:
-
-* Coverage checking
-* Termination checking
-* Positivity checking
-* Universe checking
-
-## Exercise
-
-Implement an evaluation function for expressions.
+## Untyped interpreter
 
 ```
-data Value : Set where
-  valInt   : (i : ℤ) → Value
-  valBool  : (b : Bool) → Value
-  valError : Value
+data Val : Set where
+  intV  : ℤ    → Val
+  boolV : Bool → Val
 
-eval : Exp → Value
+eval : Exp → Maybe Val
 eval = ⋯
 ```
+
+See [`V1/UntypedInterpreter.agda`]( https://github.com/jespercockx/ohrid19-agda/src/V1/html/V1.UntypedInterpreter.html)
+
+## Exercises
+
+* Install Agda and download the code with `git clone https://github.com/jespercockx/ohrid19-agda`
+* Load the code in Emacs
+* Choose a language construct (e.g. `~` or `-`) and add it to `AST.agda` and `UntypedInterpreter.agda`
+
+See also [https://jespercockx.github.io/ohrid19-agda/](https://jespercockx.github.io/ohrid19-agda/)

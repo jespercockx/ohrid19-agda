@@ -12,6 +12,38 @@ height: "720"
 margin: "0.2"
 ---
 
+
+
+# Recap: correct-by-construction programming
+
+## Indices capture invariants
+
+The indices of a datatype capture important invariants of our programs:
+
+* The length of a list
+* The lower and upper bounds of a search tree
+* The type of a syntax tree (!)
+
+## Extrinsic vs intrinsic verification
+
+Two styles of verification:
+
+* **Extrinsic**: write a program and then prove its properties
+* **Intrinsic**: define properties at the type-level and write programs that satisfy them *by construction*
+
+Intrinsic verification is a good fit for **complex** programs with **simple** invariants
+
+For small programs and/or complex invariants, extrinsic verification may work better
+
+## Let the types guide you
+
+By encoding invariants in the types, they can guide the construction of our programs:
+
+* Rule out impossible cases (absurd patterns `()`)
+* Automatic case splitting (C-c C-c)
+* Program inference (C-c C-a)
+* ...
+
 # Prototype indexed datatype: length-indexed vectors
 
 ## What are vectors?
@@ -59,36 +91,6 @@ lookup : ∀ {A} {n} → Vec A n → Fin n → A
 lookup xs i = ⋯
 ```
 `lookup` is a total function!
-
-# Recap: correct-by-construction programming
-
-## Indices capture invariants
-
-The indices of a datatype capture important invariants of our programs:
-
-* The length of a list
-* The lower and upper bounds of a search tree
-* The type of a syntax tree (!)
-
-## Extrinsic vs intrinsic verification
-
-Two styles of verification:
-
-* **Extrinsic**: write a program and then prove its properties
-* **Intrinsic**: define properties at the type-level and write programs that satisfy them *by construction*
-
-Intrinsic verification is a good fit for **complex** programs with **simple** invariants
-
-For small programs and/or complex invariants, extrinsic verification may work better
-
-## Let the types guide you
-
-By encoding invariants in the types, they can guide the construction of our programs:
-
-* Rule out impossible cases (absurd patterns `()`)
-* Automatic case splitting (C-c C-c)
-* Program inference (C-c C-a)
-* ...
 
 # Intrinsically well-typed syntax
 
@@ -212,11 +214,7 @@ eval = ⋯
 
 See definition of `eval` in [Interpreter.agda](https://jespercockx.github.io/ohrid19-agda/src/V2/html/V2.Interpreter.html).
 
-## Exercise
+## Exercises
 
-Choose a new language construct and add it to the untyped syntax, well-typed syntax, and evaluator:
-
-- Negation `~a`
-- Disjunction `a || b`
-- Conditionals `a ? b : c`
-- ...
+Extend the well-typed syntax and interpreter with the syntactic
+constructions you added before.
