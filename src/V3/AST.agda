@@ -28,12 +28,13 @@ data Boolean : Set where
 {-# COMPILE GHC Boolean = data Boolean (BTrue | BFalse) #-}
 
 data Exp : Set where
-  eId       : (x : Id)      → Exp
-  eInt      : (i : ℤ)       → Exp
-  eBool     : (b : Boolean) → Exp
-  ePlus     : (e e' : Exp)  → Exp
-  eGt       : (e e' : Exp)  → Exp
-  eAnd      : (e e' : Exp)  → Exp
+  eId   : (x : Id)         → Exp
+  eInt  : (i : ℤ)          → Exp
+  eBool : (b : Boolean)    → Exp
+  ePlus : (e e' : Exp)     → Exp
+  eGt   : (e e' : Exp)     → Exp
+  eAnd  : (e e' : Exp)     → Exp
+  eCond : (e e' e'' : Exp) → Exp
 
 
 {-# COMPILE GHC Exp = data Exp
@@ -43,6 +44,7 @@ data Exp : Set where
   | EPlus
   | EGt
   | EAnd
+  | ECond
   ) #-}
 
 record Decl : Set where

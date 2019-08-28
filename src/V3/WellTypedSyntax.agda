@@ -24,12 +24,14 @@ data Op : (dom codom : Type) → Set where
 
 data Exp (Γ : Cxt) : Type → Set where
   -- Literals:
-  eInt  : (i : ℤ)                                 → Exp Γ int
-  eBool : (b : Boolean)                           → Exp Γ bool
+  eInt  : (i : ℤ)                                  → Exp Γ int
+  eBool : (b : Boolean)                            → Exp Γ bool
   -- Operators:
-  eOp   : ∀{t t'} (op : Op t t') (e e' : Exp Γ t) → Exp Γ t'
+  eOp   : ∀{t t'} (op : Op t t') (e e' : Exp Γ t)  → Exp Γ t'
+  -- Conditionals:
+  eCond : ∀{t} (e : Exp Γ bool) (e' e'' : Exp Γ t) → Exp Γ t
   -- Variables:
-  eVar  : ∀{t}    (x : Var Γ t)                   → Exp Γ t
+  eVar  : ∀{t}    (x : Var Γ t)                    → Exp Γ t
 
 -- Well-typed declarations (extending the context).
 

@@ -43,6 +43,11 @@ mutual
   inferExp (A.ePlus e₁ e₂) = inferOp plus  e₁ e₂
   inferExp (A.eGt   e₁ e₂) = inferOp gt    e₁ e₂
   inferExp (A.eAnd  e₁ e₂) = inferOp and   e₁ e₂
+  inferExp (A.eCond e₁ e₂ e₃) = do
+    e₁' ← checkExp e₁ bool
+    (t , e₂') ← inferExp e₂
+    e₃' ← checkExp e₃ t
+    return (t , eCond e₁' e₂' e₃')
 
   -- Type checking.
   -- Calls inference and checks inferred type against given type.

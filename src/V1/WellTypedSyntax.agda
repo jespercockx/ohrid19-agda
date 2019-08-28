@@ -20,6 +20,8 @@ data Exp : Type → Set where
   eBool : (b : Boolean)                         → Exp bool
   -- Operators:
   eOp   : ∀{t t'} (op : Op t t') (e e' : Exp t) → Exp t'
+  -- Conditionals:
+  eCond : ∀{t} (e : Exp bool) (e' e'' : Exp t)  → Exp t
 
 -- For now, a program is just a final expression.
 

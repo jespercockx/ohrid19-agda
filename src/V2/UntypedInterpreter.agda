@@ -62,6 +62,12 @@ bAnd : Boolean → Boolean → Boolean
 bAnd true  b = b
 bAnd false _ = false
 
+-- Boolean conditional
+
+bIf : {A : Set} → Boolean → A → A → A
+bIf true  x y = x
+bIf false x y = y
+
 -- Greater-than on integers.
 
 iGt : (i j : ℤ) → Boolean
@@ -89,6 +95,10 @@ module EvalExp (ρ : Env) where
   eval (eAnd e₁ e₂) = case (eval e₁ , eval e₂) of λ where
     (just (boolV b₁) , just (boolV b₂)) → just (boolV (bAnd b₁ b₂))
     _ → nothing
+  eval (eCond e₁ e₂ e₃) = case (eval e₁) of λ where
+    (just (boolV b)) → bIf b (eval e₂) (eval e₃)
+    _ → nothing
+
 
 open EvalExp
 

@@ -24,6 +24,9 @@ module EvalExp {Γ} (ρ : Env Γ) where
   eval (eOp and e₁ e₂)        = case eval e₁ of λ where
     true  → eval e₂
     false → false
+  eval (eCond e₁ e₂ e₃) = case eval e₁ of λ where
+    true  → eval e₂
+    false → eval e₃
 
 open EvalExp
 

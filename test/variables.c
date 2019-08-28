@@ -3,7 +3,8 @@
 
 int main () {
   int a = 1;
-  int b = 2;
-  int c = 3;
-  printInt(a+b+c);
+  int b = 2+a;
+  int c = 3+b;
+  int result = a+b+c;
+  printInt(result);
 }

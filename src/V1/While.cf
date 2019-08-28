@@ -13,18 +13,20 @@
 
 Prg.    Program ::= "int" "main" "(" ")" "{" "printInt" Exp4 ";" "}";
 
-EInt.   Exp3 ::= Integer;
-EBool.  Exp3 ::= Boolean;
+EInt.   Exp4 ::= Integer;
+EBool.  Exp4 ::= Boolean;
 
-EPlus.  Exp2 ::= Exp2 "+" Exp3;  -- left-associative
-EGt.    Exp1 ::= Exp2 ">" Exp2;  -- non-associative
-EAnd.   Exp  ::= Exp "&&" Exp1;  -- left-associative
+EPlus.  Exp3 ::= Exp3 "+" Exp4;  -- left-associative
+EGt.    Exp2 ::= Exp3 ">" Exp3;  -- non-associative
+EAnd.   Exp1 ::= Exp1 "&&" Exp2;  -- left-associative
+ECond.  Exp  ::= Exp1 "?" Exp1 ":" Exp1;  -- non-associative
 
-coercions Exp 4;
+coercions Exp 5;
 
 -- Added by the coercions pragma:
 --
--- _.   Exp4 ::= "(" Exp ")";
+-- _.   Exp5 ::= "(" Exp ")";
+-- _.   Exp4 ::= Exp5       ;
 -- _.   Exp3 ::= Exp4       ;
 -- _.   Exp2 ::= Exp3       ;
 -- _.   Exp1 ::= Exp2       ;
