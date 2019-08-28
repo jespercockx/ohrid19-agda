@@ -4,7 +4,7 @@
 <a id="63" class="Keyword">module</a> <a id="70" href="V3.Parser.html" class="Module">V3.Parser</a> <a id="80" class="Keyword">where</a>
 
 <a id="87" class="Keyword">open</a> <a id="92" class="Keyword">import</a> <a id="99" href="Library.html" class="Module">Library</a>
-<a id="107" class="Keyword">open</a> <a id="112" class="Keyword">import</a> <a id="119" href="V3.AST.html" class="Module">V3.AST</a> <a id="126" class="Keyword">using</a> <a id="132" class="Symbol">(</a><a id="133" href="V3.AST.html#1334" class="Record">Program</a><a id="140" class="Symbol">)</a>
+<a id="107" class="Keyword">open</a> <a id="112" class="Keyword">import</a> <a id="119" href="V3.AST.html" class="Module">V3.AST</a> <a id="126" class="Keyword">using</a> <a id="132" class="Symbol">(</a><a id="133" href="V3.AST.html#1268" class="Record">Program</a><a id="140" class="Symbol">)</a>
 
 <a id="143" class="Symbol">{-#</a> <a id="147" class="Keyword">FOREIGN</a> <a id="155" class="Pragma">GHC</a> <a id="159" class="Pragma">import</a> <a id="166" class="Pragma">qualified</a> <a id="176" class="Pragma">Data.Text</a>  <a id="187" class="Symbol">#-}</a>
 
@@ -21,7 +21,7 @@
 <a id="469" class="Symbol">{-#</a> <a id="473" class="Keyword">COMPILE</a> <a id="481" class="Pragma">GHC</a> <a id="485" href="V3.Parser.html#396" class="Datatype">Err</a> <a id="489" class="Pragma">=</a> <a id="491" class="Pragma">data</a> <a id="496" class="Pragma">Err</a> <a id="500" class="Pragma">(</a> <a id="502" class="Pragma">Ok</a> <a id="505" class="Pragma">|</a> <a id="507" class="Pragma">Bad</a> <a id="511" class="Pragma">)</a> <a id="513" class="Symbol">#-}</a>
 
 <a id="518" class="Keyword">postulate</a>
-  <a id="parse"></a><a id="530" href="V3.Parser.html#530" class="Postulate">parse</a> <a id="536" class="Symbol">:</a> <a id="538" href="Agda.Builtin.String.html#247" class="Postulate">String</a> <a id="545" class="Symbol">→</a> <a id="547" href="V3.Parser.html#396" class="Datatype">Err</a> <a id="551" href="V3.AST.html#1334" class="Record">Program</a>
+  <a id="parse"></a><a id="530" href="V3.Parser.html#530" class="Postulate">parse</a> <a id="536" class="Symbol">:</a> <a id="538" href="Agda.Builtin.String.html#247" class="Postulate">String</a> <a id="545" class="Symbol">→</a> <a id="547" href="V3.Parser.html#396" class="Datatype">Err</a> <a id="551" href="V3.AST.html#1268" class="Record">Program</a>
 
 <a id="560" class="Symbol">{-#</a> <a id="564" class="Keyword">COMPILE</a> <a id="572" class="Pragma">GHC</a> <a id="576" href="V3.Parser.html#530" class="Postulate">parse</a> <a id="582" class="Pragma">=</a> <a id="584" class="Pragma">pProgram</a> <a id="593" class="Pragma">.</a> <a id="595" class="Pragma">myLexer</a> <a id="603" class="Pragma">.</a> <a id="605" class="Pragma">Data.Text.unpack</a> <a id="622" class="Symbol">#-}</a>
 </pre></body></html>
