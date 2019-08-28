@@ -4,12 +4,12 @@
 <a id="54" class="Keyword">module</a> <a id="61" href="V1.runwhile.html" class="Module">V1.runwhile</a> <a id="73" class="Keyword">where</a>
 
 <a id="80" class="Keyword">open</a> <a id="85" class="Keyword">import</a> <a id="92" href="Library.html" class="Module">Library</a>
-<a id="100" class="Keyword">open</a> <a id="105" class="Keyword">import</a> <a id="112" href="V1.WellTypedSyntax.html" class="Module">V1.WellTypedSyntax</a> <a id="131" class="Keyword">using</a> <a id="137" class="Symbol">(</a><a id="138" href="V1.WellTypedSyntax.html#654" class="Record">Program</a><a id="145" class="Symbol">)</a>
-<a id="147" class="Keyword">open</a> <a id="152" class="Keyword">import</a> <a id="159" href="V1.TypeChecker.html" class="Module">V1.TypeChecker</a>     <a id="178" class="Keyword">using</a> <a id="184" class="Symbol">(</a><a id="185" href="V1.TypeChecker.html#1822" class="Function">checkProgram</a><a id="197" class="Symbol">)</a>
+<a id="100" class="Keyword">open</a> <a id="105" class="Keyword">import</a> <a id="112" href="V1.WellTypedSyntax.html" class="Module">V1.WellTypedSyntax</a> <a id="131" class="Keyword">using</a> <a id="137" class="Symbol">(</a><a id="138" href="V1.WellTypedSyntax.html#729" class="Record">Program</a><a id="145" class="Symbol">)</a>
+<a id="147" class="Keyword">open</a> <a id="152" class="Keyword">import</a> <a id="159" href="V1.TypeChecker.html" class="Module">V1.TypeChecker</a>     <a id="178" class="Keyword">using</a> <a id="184" class="Symbol">(</a><a id="185" href="V1.TypeChecker.html#1971" class="Function">checkProgram</a><a id="197" class="Symbol">)</a>
 
 <a id="200" class="Keyword">import</a> <a id="207" href="V1.AST.html" class="Module">V1.AST</a> <a id="214" class="Symbol">as</a> <a id="217" class="Module">A</a>
 <a id="219" class="Keyword">import</a> <a id="226" href="V1.Parser.html" class="Module">V1.Parser</a> <a id="236" class="Symbol">as</a> <a id="239" class="Module">Parser</a>
-<a id="246" class="Keyword">open</a> <a id="251" class="Keyword">import</a> <a id="258" href="V1.Interpreter.html" class="Module">V1.Interpreter</a> <a id="273" class="Keyword">using</a> <a id="279" class="Symbol">(</a><a id="280" href="V1.Interpreter.html#648" class="Function">runProgram</a><a id="290" class="Symbol">)</a>
+<a id="246" class="Keyword">open</a> <a id="251" class="Keyword">import</a> <a id="258" href="V1.Interpreter.html" class="Module">V1.Interpreter</a> <a id="273" class="Keyword">using</a> <a id="279" class="Symbol">(</a><a id="280" href="V1.Interpreter.html#780" class="Function">runProgram</a><a id="290" class="Symbol">)</a>
 
 <a id="293" class="Comment">-- Other modules, not used here.</a>
 <a id="326" class="Keyword">import</a> <a id="333" href="V1.Value.html" class="Module">V1.Value</a>
@@ -17,7 +17,7 @@
 
 <a id="372" class="Comment">-- Parse.</a>
 
-<a id="parse"></a><a id="383" href="V1.runwhile.html#383" class="Function">parse</a> <a id="389" class="Symbol">:</a> <a id="391" href="Agda.Builtin.String.html#247" class="Postulate">String</a> <a id="398" class="Symbol">→</a> <a id="400" href="Agda.Builtin.IO.html#111" class="Postulate">IO</a> <a id="403" href="V1.AST.html#759" class="Record">A.Program</a>
+<a id="parse"></a><a id="383" href="V1.runwhile.html#383" class="Function">parse</a> <a id="389" class="Symbol">:</a> <a id="391" href="Agda.Builtin.String.html#247" class="Postulate">String</a> <a id="398" class="Symbol">→</a> <a id="400" href="Agda.Builtin.IO.html#111" class="Postulate">IO</a> <a id="403" href="V1.AST.html#818" class="Record">A.Program</a>
 <a id="413" href="V1.runwhile.html#383" class="Function">parse</a> <a id="419" href="V1.runwhile.html#419" class="Bound">contents</a> <a id="428" class="Symbol">=</a> <a id="430" href="Function.html#3662" class="Function Operator">case</a> <a id="435" href="V1.Parser.html#530" class="Postulate">Parser.parse</a> <a id="448" href="V1.runwhile.html#419" class="Bound">contents</a> <a id="457" href="Function.html#3662" class="Function Operator">of</a> <a id="460" class="Symbol">λ</a> <a id="462" class="Keyword">where</a>
     <a id="472" class="Symbol">(</a><a id="473" href="V1.Parser.html#443" class="InductiveConstructor">bad</a> <a id="477" href="V1.runwhile.html#477" class="Bound">cs</a><a id="479" class="Symbol">)</a> <a id="481" class="Symbol">→</a> <a id="483" class="Keyword">do</a>
       <a id="492" href="Library.IO.html#621" class="Postulate">putStrLn</a> <a id="501" class="String">&quot;SYNTAX ERROR&quot;</a>
@@ -29,8 +29,8 @@
 
 <a id="642" class="Comment">-- Type check.</a>
 
-<a id="check"></a><a id="658" href="V1.runwhile.html#658" class="Function">check</a> <a id="664" class="Symbol">:</a> <a id="666" href="V1.AST.html#759" class="Record">A.Program</a> <a id="676" class="Symbol">→</a> <a id="678" href="Agda.Builtin.IO.html#111" class="Postulate">IO</a> <a id="681" href="V1.WellTypedSyntax.html#654" class="Record">Program</a>
-<a id="689" href="V1.runwhile.html#658" class="Function">check</a> <a id="695" href="V1.runwhile.html#695" class="Bound">prg</a> <a id="699" class="Symbol">=</a> <a id="701" href="Function.html#3662" class="Function Operator">case</a> <a id="706" href="V1.TypeChecker.html#1822" class="Function">checkProgram</a> <a id="719" href="V1.runwhile.html#695" class="Bound">prg</a> <a id="723" href="Function.html#3662" class="Function Operator">of</a> <a id="726" class="Symbol">λ</a> <a id="728" class="Keyword">where</a>
+<a id="check"></a><a id="658" href="V1.runwhile.html#658" class="Function">check</a> <a id="664" class="Symbol">:</a> <a id="666" href="V1.AST.html#818" class="Record">A.Program</a> <a id="676" class="Symbol">→</a> <a id="678" href="Agda.Builtin.IO.html#111" class="Postulate">IO</a> <a id="681" href="V1.WellTypedSyntax.html#729" class="Record">Program</a>
+<a id="689" href="V1.runwhile.html#658" class="Function">check</a> <a id="695" href="V1.runwhile.html#695" class="Bound">prg</a> <a id="699" class="Symbol">=</a> <a id="701" href="Function.html#3662" class="Function Operator">case</a> <a id="706" href="V1.TypeChecker.html#1971" class="Function">checkProgram</a> <a id="719" href="V1.runwhile.html#695" class="Bound">prg</a> <a id="723" href="Function.html#3662" class="Function Operator">of</a> <a id="726" class="Symbol">λ</a> <a id="728" class="Keyword">where</a>
     <a id="738" class="Symbol">(</a><a id="739" href="Library.Error.html#238" class="InductiveConstructor">fail</a> <a id="744" href="V1.runwhile.html#744" class="Bound">err</a><a id="747" class="Symbol">)</a> <a id="749" class="Symbol">→</a> <a id="751" class="Keyword">do</a>
       <a id="760" href="Library.IO.html#621" class="Postulate">putStrLn</a> <a id="769" class="String">&quot;TYPE ERROR&quot;</a>
       <a id="788" href="Library.IO.html#588" class="Postulate">putStr</a>   <a id="797" class="Symbol">(</a><a id="798" href="Library.Print.html#244" class="Field">print</a> <a id="804" href="V1.runwhile.html#695" class="Bound">prg</a><a id="807" class="Symbol">)</a>
@@ -43,8 +43,8 @@
 
 <a id="964" class="Comment">-- Interpret.</a>
 
-<a id="run"></a><a id="979" href="V1.runwhile.html#979" class="Function">run</a> <a id="983" class="Symbol">:</a> <a id="985" href="V1.WellTypedSyntax.html#654" class="Record">Program</a> <a id="993" class="Symbol">→</a> <a id="995" href="Agda.Builtin.IO.html#111" class="Postulate">IO</a> <a id="998" href="Agda.Builtin.Unit.html#137" class="Record">⊤</a>
-<a id="1000" href="V1.runwhile.html#979" class="Function">run</a> <a id="1004" href="V1.runwhile.html#1004" class="Bound">prg&#39;</a> <a id="1009" class="Symbol">=</a> <a id="1011" href="Library.IO.html#621" class="Postulate">putStrLn</a> <a id="1020" class="Symbol">(</a><a id="1021" href="Library.Print.html#244" class="Field">print</a> <a id="1027" class="Symbol">(</a><a id="1028" href="V1.Interpreter.html#648" class="Function">runProgram</a> <a id="1039" href="V1.runwhile.html#1004" class="Bound">prg&#39;</a><a id="1043" class="Symbol">))</a>
+<a id="run"></a><a id="979" href="V1.runwhile.html#979" class="Function">run</a> <a id="983" class="Symbol">:</a> <a id="985" href="V1.WellTypedSyntax.html#729" class="Record">Program</a> <a id="993" class="Symbol">→</a> <a id="995" href="Agda.Builtin.IO.html#111" class="Postulate">IO</a> <a id="998" href="Agda.Builtin.Unit.html#137" class="Record">⊤</a>
+<a id="1000" href="V1.runwhile.html#979" class="Function">run</a> <a id="1004" href="V1.runwhile.html#1004" class="Bound">prg&#39;</a> <a id="1009" class="Symbol">=</a> <a id="1011" href="Library.IO.html#621" class="Postulate">putStrLn</a> <a id="1020" class="Symbol">(</a><a id="1021" href="Library.Print.html#244" class="Field">print</a> <a id="1027" class="Symbol">(</a><a id="1028" href="V1.Interpreter.html#780" class="Function">runProgram</a> <a id="1039" href="V1.runwhile.html#1004" class="Bound">prg&#39;</a><a id="1043" class="Symbol">))</a>
 
 <a id="1047" class="Comment">-- Display usage information and exit.</a>
 
