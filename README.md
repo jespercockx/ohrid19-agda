@@ -31,8 +31,8 @@ Links
   4](slides/slides4.html)
 
 * Code listing [V1](src/V1/html/V1.runwhile.html)
-  [V2](src/V1/html/V2.runwhile.html)
-  [V3](src/V1/html/V3.runwhile.html)
+  [V2](src/V2/html/V2.runwhile.html)
+  [V3](src/V3/html/V3.runwhile.html)
 
 <!--
 * This README as a Webpage on
