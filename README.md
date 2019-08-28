@@ -1,8 +1,6 @@
 Correct by Construction Programming in Agda
 ===========================================
 
-(This page is currently under construction)
-
 Abstract
 --------
 
