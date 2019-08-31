@@ -14,17 +14,18 @@ margin: "0.2"
 
 # Correct-by-construction programming
 
-##
-
-"Program testing can be used to show the presence of bugs, but never to show their absence!"
-
---Edsger Dijkstra
 
 ##
 
 "A computer will do what you tell it to do, but that may be much different from what you had in mind."
 
 --Joseph Weizenbaum
+
+##
+
+"Program testing can be used to show the presence of bugs, but never to show their absence!"
+
+--Edsger Dijkstra
 
 ##
 
@@ -56,10 +57,6 @@ postulate
   ⋯ : ∀ {ℓ} {A : Set ℓ} → A
 
 module Intro where
-```
--->
-
-```agda
   open import Data.Bool.Base using (Bool; true; false)
   open import Data.Char.Base using (Char)
   open import Data.Integer.Base using (ℤ)
@@ -68,7 +65,10 @@ module Intro where
   open import Data.Nat.Base using (ℕ; zero; suc; _+_; _*_; _<_)
   open import Data.Product using (_×_; _,_)
   open import Agda.Builtin.Equality using (_≡_; refl)
+```
+-->
 
+```agda
   module Extrinsic where
     sort : List ℕ → List ℕ
     sort = ⋯
