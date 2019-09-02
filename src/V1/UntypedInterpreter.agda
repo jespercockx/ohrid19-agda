@@ -44,9 +44,9 @@ bIf false x y = y
 -- Greater-than on integers.
 
 iGt : (i j : ℤ) → Boolean
-iGt i j = case i Integer.<= j of λ where
+iGt i j = case i Integer.<= j of (λ where
   false → true
-  true  → false
+  true  → false)
 
 -- Evaluation of expressions.  The environment is fixed.
 

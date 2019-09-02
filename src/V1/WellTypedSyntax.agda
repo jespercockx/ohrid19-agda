@@ -16,12 +16,14 @@ data Op : (dom codom : Type) → Set where
 
 data Exp : Type → Set where
   -- Literals:
-  eInt  : (i : ℤ)                               → Exp int
-  eBool : (b : Boolean)                         → Exp bool
+  eInt  : (i : ℤ)           → Exp int
+  eBool : (b : Boolean)     → Exp bool
   -- Operators:
-  eOp   : ∀{t t'} (op : Op t t') (e e' : Exp t) → Exp t'
+  ePlus : (e e' : Exp int)  → Exp int
+  eGt   : (e e' : Exp int)  → Exp bool
+  eAnd  : (e e' : Exp bool) → Exp bool
   -- Conditionals:
-  eCond : ∀{t} (e : Exp bool) (e' e'' : Exp t)  → Exp t
+  eCond : ∀{t} (e : Exp bool) (e' e'' : Exp t) → Exp t
 
 -- For now, a program is just a final expression.
 

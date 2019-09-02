@@ -13,13 +13,6 @@ data Var : (Γ : Cxt) (t : Type) → Set where
   here  : ∀ {Γ t} → Var (t ∷ Γ) t
   there : ∀ {Γ t t'} → Var Γ t → Var (t' ∷ Γ) t
 
--- Binary Operators.
-
-data Op : (dom codom : Type) → Set where
-  plus  : Op int  int
-  gt    : Op int  bool
-  and   : Op bool bool
-
 -- Well-typed expressions: context is fixed.
 
 data Exp (Γ : Cxt) : Type → Set where
@@ -27,7 +20,9 @@ data Exp (Γ : Cxt) : Type → Set where
   eInt  : (i : ℤ)                                  → Exp Γ int
   eBool : (b : Boolean)                            → Exp Γ bool
   -- Operators:
-  eOp   : ∀{t t'} (op : Op t t') (e e' : Exp Γ t)  → Exp Γ t'
+  ePlus : (e e' : Exp Γ int)                       → Exp Γ int
+  eGt   : (e e' : Exp Γ int)                       → Exp Γ bool
+  eAnd  : (e e' : Exp Γ bool)                      → Exp Γ bool
   -- Conditionals:
   eCond : ∀{t} (e : Exp Γ bool) (e' e'' : Exp Γ t) → Exp Γ t
   -- Variables:

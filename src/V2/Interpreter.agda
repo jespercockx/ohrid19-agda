@@ -17,11 +17,11 @@ module EvalExp {Γ} (ρ : Env Γ) where
   eval (eInt  i)        = i
   eval (eBool b)        = b
   eval (eVar x)         = lookupEnv ρ x
-  eval (eOp plus e₁ e₂) = eval e₁ + eval e₂
-  eval (eOp gt  e₁ e₂)  = iGt (eval e₁) (eval e₂)
-  eval (eOp and e₁ e₂)  = case eval e₁ of λ where
-    true  → eval e₂
-    false → false
+  eval (ePlus e₁ e₂)    = eval e₁ + eval e₂
+  eval (eGt  e₁ e₂)     = iGt (eval e₁) (eval e₂)
+  eval (eAnd e₁ e₂)     = case eval e₁ of λ where
+                            true  → eval e₂
+                            false → false
   eval (eCond e₁ e₂ e₃) = case eval e₁ of λ where
     true  → eval e₂
     false → eval e₃

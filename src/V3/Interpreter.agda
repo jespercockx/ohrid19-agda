@@ -16,14 +16,14 @@ open import V3.Delay using (Delay; force; later'; runDelay) public
 module EvalExp {Γ} (ρ : Env Γ) where
 
   eval : ∀{t} (e : Exp Γ t) → Val t
-  eval (eInt  i)              = i
-  eval (eBool b)              = b
-  eval (eVar x)               = lookupEnv ρ x
-  eval (eOp plus e₁ e₂)       = eval e₁ + eval e₂
-  eval (eOp gt  e₁ e₂)        = iGt (eval e₁) (eval e₂)
-  eval (eOp and e₁ e₂)        = case eval e₁ of λ where
-    true  → eval e₂
-    false → false
+  eval (eInt  i)        = i
+  eval (eBool b)        = b
+  eval (eVar x)         = lookupEnv ρ x
+  eval (ePlus e₁ e₂)    = eval e₁ + eval e₂
+  eval (eGt  e₁ e₂)     = iGt (eval e₁) (eval e₂)
+  eval (eAnd e₁ e₂)     = case eval e₁ of λ where
+                            true  → eval e₂
+                            false → false
   eval (eCond e₁ e₂ e₃) = case eval e₁ of λ where
     true  → eval e₂
     false → eval e₃
