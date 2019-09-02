@@ -28,7 +28,7 @@ data Boolean : Set where
 {-# COMPILE GHC Boolean = data Boolean (BTrue | BFalse) #-}
 
 data Exp : Set where
-  eId       : (x : Id)      → Exp
+  eId    : (x : Id)         → Exp
   eInt   : (i : ℤ)          → Exp
   eBool  : (b : Boolean)    → Exp
   ePlus  : (e e' : Exp)     → Exp
