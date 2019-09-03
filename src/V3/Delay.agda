@@ -23,18 +23,18 @@ open Delay public
 -- Smart constructor.
 
 later : ∀ {A i} → Delay i A → Delay (↑ i) A
-later x .force = later' x
+force (later x) = later' x
 
 -- Example: non-termination.
 
 never : ∀ {A i} → Delay A i
-never .force = later' never
+force never = later' never
 
 -- Monad instance.
 
 private
   returnDelay : ∀{A i} → A → Delay i A
-  returnDelay a .force = return' a
+  force (returnDelay a) = return' a
 
   bindDelay : ∀ {i A B} → Delay i A → (A → Delay i B) → Delay i B
   bindDelay m k .force = case m .force of λ where
