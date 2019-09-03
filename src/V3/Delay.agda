@@ -25,7 +25,7 @@ open Delay public
 {-# COMPILE GHC Delay' = data Delay' ( Return | Later ) #-}
 
 postulate runDelay : ∀ {i} {A : Set} → Delay i A → A
-{-# COMPILE GHC runDelay = runDelay #-}
+{-# COMPILE GHC runDelay = \_ _ -> runDelay #-}
 
 -- Smart constructor.
 
