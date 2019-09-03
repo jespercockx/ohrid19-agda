@@ -31,3 +31,14 @@ instance
 
   PrintBool : Print Bool
   print {{PrintBool}} = printBool
+
+open import Data.Vec using (Vec; []; _∷_)
+open import Data.String
+
+instance
+  PrintVec : ∀ {A : Set} {n}
+           → {{printA : Print A}}
+           → Print (Vec A n)
+  print ⦃ PrintVec ⦄ [] = "[]"
+  print ⦃ PrintVec ⦄ (x ∷ xs) =
+    print x ++ "∷" ++ print xs
