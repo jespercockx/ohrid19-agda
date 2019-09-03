@@ -212,8 +212,9 @@ module CheckDeclarations where
 
   -- Checking the program in TCDecl.
 
-  checkProgram : (prg : A.Program) (let Γ = Nexts [] (A.theDecls prg))
-    → TCDecl [] Γ Program
+  checkProgram : (prg : A.Program)
+    → let Γ = Nexts [] (A.theDecls prg)
+      in  TCDecl [] Γ Program
 
   checkProgram (A.program ds e) = do
     ds' ← checkDecls ds

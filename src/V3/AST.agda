@@ -59,8 +59,8 @@ open Decl public
   ) #-}
 
 data Stm : Set where
-  sAss    : (x : Id) (e : Exp)            → Stm
-  sWhile  : (e : Exp) (ss : List Stm)     → Stm
+  sAss    : (x : Id) (e : Exp)        → Stm
+  sWhile  : (e : Exp) (ss : List Stm) → Stm
 
 {-# COMPILE GHC Stm = data Stm
   ( SAss
