@@ -9,6 +9,7 @@ open import V3.TypeChecker     using (checkProgram)
 import V3.AST as A
 import V3.Parser as Parser
 open import V3.Interpreter using (runProgram)
+open import V3.Delay       using (runDelay)
 
 -- Other modules, not used here.
 import V3.Value
@@ -43,7 +44,7 @@ check prg = case checkProgram prg of λ where
 -- Interpret.
 
 run : Program → IO ⊤
-run prg' = putStrLn (print (runProgram prg'))
+run prg' = putStrLn (print (runDelay (runProgram prg')))
 
 -- Display usage information and exit.
 

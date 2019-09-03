@@ -20,6 +20,13 @@ mutual
 
 open Delay public
 
+{-# FOREIGN GHC import Delay #-}
+{-# COMPILE GHC Delay = data Delay ( Delay ) #-}
+{-# COMPILE GHC Delay' = data Delay' ( Return | Later ) #-}
+
+postulate runDelay : ∀ {i} {A : Set} → Delay i A → A
+{-# COMPILE GHC runDelay = runDelay #-}
+
 -- Smart constructor.
 
 later : ∀ {A i} → Delay i A → Delay (↑ i) A
@@ -51,14 +58,6 @@ instance
 
   monadDelay : ∀ {i} → Monad (Delay i)
   _>>=_ {{monadDelay}} = bindDelay
-
--- Unwinding the delay monad might not terminate.
-
-{-# NON_TERMINATING #-}
-runDelay : ∀{A} → Delay ∞ A → A
-runDelay m = case m .force of λ where
-  (return' a) → a
-  (later' m') → runDelay m'
 
 -- -}
 -- -}

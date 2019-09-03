@@ -136,7 +136,7 @@ execPrg (program ds ss e) = do
 
 -- The result of a program is an integer.
 
-runProgram : (prg : Program) → ℤ
-runProgram prg = runDelay (execPrg prg)
+runProgram : (prg : Program) → Delay ∞ ℤ
+runProgram prg = execPrg prg
 
 -- -}
