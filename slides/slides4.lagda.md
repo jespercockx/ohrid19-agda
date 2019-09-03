@@ -116,8 +116,8 @@ module Coinduction where
     open Stream
 
     repeat : {A : Set} → A → Stream A
-    repeat x .head = x
-    repeat x .tail = repeat x
+    head (repeat x) = x
+    tail (repeat x) = repeat x
 ```
 
 ## Mixing induction and coinduction (1/2)
@@ -129,7 +129,7 @@ module Coinduction where
     record Coℕ′ : Set where
       coinductive
       field
-        .force : Coℕ
+        force : Coℕ
 
     data Coℕ : Set where
       zero : Coℕ
@@ -207,7 +207,7 @@ The `Delay` monad captures the effect of *non-termination*
   open Delay public
 
   never : {A : Set} → Delay A
-  never .force = later never
+  force never = later never
 ```
 
 ## Unrolling a `Delay`ed value
@@ -215,7 +215,7 @@ The `Delay` monad captures the effect of *non-termination*
 ```
   unroll : {A : Set} → ℕ → Delay A → Maybe A
   unroll zero    x = nothing
-  unroll (suc n) x = case (x .force) of λ where
+  unroll (suc n) x = case (force x) of λ where
     (now v  ) → just v
     (later d) → unroll n d
 ```
@@ -307,7 +307,7 @@ Now you should be ready to add a bigger new feature:
 
 * A new control operator: `if` statements, `do/while` loops, `for`, `switch`, ...
 * New types: `char`, `bool`, ...
-* New programming concepts: function calls, pointers, ...
+* New programming concepts: function calls, pointers (hard!), ...
 
 Extend the syntax, the typechecker, and the interpreter with rules for
 your new feature.
