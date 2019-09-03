@@ -213,10 +213,10 @@ The `Delay` monad captures the effect of *non-termination*
 ## Unrolling a `Delay`ed value
 
 ```
-  unroll : {A : Set} → ℕ → Delay A → Maybe A
-  unroll zero    x = nothing
+  unroll : {A : Set} → ℕ → Delay A → A ⊎ Delay A
+  unroll zero    x = inj₂ x
   unroll (suc n) x = case (force x) of λ where
-    (now v  ) → just v
+    (now v  ) → inj₁ v
     (later d) → unroll n d
 ```
 
