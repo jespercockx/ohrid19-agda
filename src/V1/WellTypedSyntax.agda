@@ -5,13 +5,6 @@ module V1.WellTypedSyntax where
 open import Library
 open import V1.AST public using (Type; bool; int; Boolean; true; false; PrintBoolean)
 
--- Binary Operators.
-
-data Op : (dom codom : Type) → Set where
-  plus  : Op int  int
-  gt    : Op int  bool
-  and   : Op bool bool
-
 -- Well-typed expressions: context is fixed.
 
 data Exp : Type → Set where
